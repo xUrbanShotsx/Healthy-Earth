@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import type { IconName } from "@/components/Icon";
+import { EllaAvatar } from "@/components/EllaAvatar";
 
 // Product slug map for inline recommendation chips
 const PRODUCT_LINKS: Record<string, string> = {
@@ -170,12 +171,7 @@ export default function ChatAssistantPage() {
 
       {/* ── Header bar ─────────────────────────────────────────────── */}
       <div className="border-b border-gray-100 px-4 sm:px-6 py-3 flex items-center gap-3 bg-white flex-shrink-0 shadow-sm">
-        <div
-          className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-          style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a, #8bc34a)" }}
-        >
-          E
-        </div>
+        <EllaAvatar className="w-10 h-10 flex-shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-gray-900 text-sm">Ella — Plant Nutrition Expert</p>
           <p className="text-xs text-gray-400">Powered by BioCare agronomy · 25 formulations</p>
@@ -202,12 +198,7 @@ export default function ChatAssistantPage() {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
             {/* Ella intro */}
             <div className="text-center mb-10">
-              <div
-                className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-5"
-                style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a, #8bc34a)" }}
-              >
-                E
-              </div>
+              <EllaAvatar className="w-24 h-24 mx-auto mb-5" />
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Hi, I&apos;m Ella</h1>
               <p className="text-gray-500 max-w-md mx-auto leading-relaxed">
                 Healthy Earth&apos;s AI plant nutrition expert. Describe what&apos;s going on with your plants and I&apos;ll give you a specific, science-backed recommendation — free, instant, no account needed.
@@ -255,12 +246,7 @@ export default function ChatAssistantPage() {
               return (
                 <div key={i} className={`flex gap-3 ${!isAssistant ? "flex-row-reverse" : ""}`}>
                   {isAssistant && (
-                    <div
-                      className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-bold self-start mt-0.5"
-                      style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}
-                    >
-                      E
-                    </div>
+                    <EllaAvatar className="w-8 h-8 flex-shrink-0 self-start mt-0.5" />
                   )}
 
                   <div className={`flex flex-col gap-2 ${isAssistant ? "flex-1 max-w-xl" : ""}`}>
@@ -321,12 +307,7 @@ export default function ChatAssistantPage() {
             {/* Typing indicator */}
             {loading && (
               <div className="flex gap-3">
-                <div
-                  className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-bold self-start"
-                  style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}
-                >
-                  E
-                </div>
+                <EllaAvatar className="w-8 h-8 flex-shrink-0 self-start" />
                 <div className="bg-white px-4 py-3.5 rounded-2xl rounded-tl-sm shadow-sm border border-gray-100">
                   <div className="flex gap-1.5 items-center h-4">
                     {[0, 1, 2].map((d) => (
