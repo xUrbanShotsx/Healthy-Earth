@@ -30,8 +30,14 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <section className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-12 relative overflow-hidden" style={{ background: "#f7f4ef" }}>
+        {/* Decorative backdrop */}
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #2d7a3a18 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, #8bc34a22, transparent 70%)" }} />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, #2d7a3a18, transparent 70%)" }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, #ffffff60, transparent 60%)" }} />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
 
           {/* Search + filters */}
           <div className="flex flex-col sm:flex-row gap-4 mb-10">
@@ -77,7 +83,7 @@ export default function ProductsPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((product: Product) => (
-                <div key={product.id} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col">
+                <div key={product.id} className="group bg-white rounded-2xl overflow-hidden border border-white shadow-md hover:shadow-2xl transition-all hover:-translate-y-1 flex flex-col">
                   <div className="h-44 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${product.color}12, ${product.color}30)` }}>
                     <span style={{ color: product.color }}><Icon name={product.icon} className="w-20 h-20" /></span>
                   </div>
