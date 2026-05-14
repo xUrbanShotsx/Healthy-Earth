@@ -79,7 +79,7 @@ export default function ProductsPage() {
               {filtered.map((product: Product) => (
                 <div key={product.id} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col">
                   <div className="h-44 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${product.color}12, ${product.color}30)` }}>
-                    <Icon name={product.icon} className="w-20 h-20" style={{ color: product.color }} />
+                    <span style={{ color: product.color }}><Icon name={product.icon} className="w-20 h-20" /></span>
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex items-start justify-between gap-2 mb-3">

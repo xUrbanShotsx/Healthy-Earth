@@ -44,7 +44,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Image */}
             <div className="rounded-3xl flex items-center justify-center h-80 lg:h-96" style={{ background: `linear-gradient(135deg, ${product.color}15, ${product.color}35)` }}>
-              <Icon name={product.icon} className="w-40 h-40" style={{ color: product.color }} />
+              <span style={{ color: product.color }}><Icon name={product.icon} className="w-40 h-40" /></span>
             </div>
 
             {/* Info */}
