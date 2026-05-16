@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { products, categories } from "@/lib/products";
 import type { Product } from "@/lib/products";
 import { Icon } from "@/components/Icon";
@@ -84,8 +85,12 @@ export default function ProductsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((product: Product) => (
                 <div key={product.id} className="group bg-white rounded-2xl overflow-hidden border border-white shadow-md hover:shadow-2xl transition-all hover:-translate-y-1 flex flex-col">
-                  <div className="h-44 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${product.color}12, ${product.color}30)` }}>
-                    <span style={{ color: product.color }}><Icon name={product.icon} className="w-20 h-20" /></span>
+                  <div className="h-44 flex items-center justify-center overflow-hidden" style={{ background: `linear-gradient(135deg, ${product.color}12, ${product.color}30)` }}>
+                    {product.image ? (
+                      <Image src={product.image} alt={product.shortName} width={320} height={176} className="w-full h-full object-cover" />
+                    ) : (
+                      <span style={{ color: product.color }}><Icon name={product.icon} className="w-20 h-20" /></span>
+                    )}
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex items-start justify-between gap-2 mb-3">

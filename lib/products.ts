@@ -18,6 +18,7 @@ export type Product = {
   sizes: string[];
   color: string;
   icon: IconName;
+  image?: string;
   featured: boolean;
   tags: string[];
 };
@@ -86,6 +87,7 @@ export const products: Product[] = [
     sizes: ["500 mL", "1 L", "5 L"],
     color: "#43a047",
     icon: "shield",
+    image: "/products/eco-spray.jpg",
     featured: false,
     tags: ["eco", "safe", "family", "pets", "garden", "spray", "biostimulant"],
   },
