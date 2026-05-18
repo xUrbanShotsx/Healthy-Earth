@@ -1,16 +1,18 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function EllaFloatingButton() {
   const [visible, setVisible] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 1500);
     return () => clearTimeout(timer);
   }, []);
 
-  if (!visible) return null;
+  if (!visible || pathname === "/chat-assistant") return null;
 
   return (
     <Link
