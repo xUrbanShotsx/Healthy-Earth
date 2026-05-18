@@ -108,17 +108,25 @@ function getResponse(msg: string): string {
   return "Thanks for that — let me help you get to the bottom of it.\n\nTo give you the most accurate recommendation, can you tell me:\n\n**1.** What type of plant or crop? (lawn, vegetables, fruit trees, broadacre crop, etc.)\n**2.** What symptoms are you seeing? (yellowing, poor growth, patchy, wilting, etc.)\n**3.** Where are you located — state and region if possible?\n\nThe more detail, the better I can tailor the advice.";
 }
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*/g, "")
+    .replace(/•\s?/g, "")
+    .replace(/›\s?/g, "")
+    .replace(/\n\n/g, ". ")
+    .replace(/\n/g, " ")
+    .trim();
+}
+
 function renderContent(text: string) {
   return text.split("\n").map((line, i) => {
     if (line === "") return <div key={i} className="h-2" />;
-
     const isBullet = line.startsWith("• ") || line.startsWith("**1.**") || line.startsWith("**2.**") || line.startsWith("**3.**");
-
     const parts = line.split(/\*\*(.*?)\*\*/g);
     const rendered = parts.map((part, j) =>
       j % 2 === 1 ? <strong key={j} className="font-semibold">{part}</strong> : part
     );
-
     if (isBullet) {
       return (
         <div key={i} className="flex gap-2 mb-1">
@@ -127,7 +135,6 @@ function renderContent(text: string) {
         </div>
       );
     }
-
     return <p key={i} className="mb-1 leading-relaxed">{rendered}</p>;
   });
 }
@@ -136,18 +143,137 @@ export default function ChatAssistantPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [interimText, setInterimText] = useState("");
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
+  const voiceEnabledRef = useRef(true);
   const hasStarted = messages.length > 0;
+
+  useEffect(() => {
+    voiceEnabledRef.current = voiceEnabled;
+    if (!voiceEnabled && typeof window !== "undefined") {
+      window.speechSynthesis?.cancel();
+      setSpeaking(false);
+    }
+  }, [voiceEnabled]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined") {
+        window.speechSynthesis?.cancel();
+        recognitionRef.current?.stop();
+      }
+    };
+  }, []);
+
+  function speakText(text: string) {
+    if (!voiceEnabledRef.current || typeof window === "undefined") return;
+    window.speechSynthesis.cancel();
+    const clean = stripMarkdown(text);
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.lang = "en-AU";
+    utterance.rate = 0.95;
+    utterance.pitch = 1.1;
+
+    const applyVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const voice =
+        voices.find((v) => v.lang === "en-AU" && /karen|catherine|female/i.test(v.name)) ||
+        voices.find((v) => v.lang === "en-AU") ||
+        voices.find((v) => v.lang.startsWith("en-"));
+      if (voice) utterance.voice = voice;
+    };
+
+    applyVoice();
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = applyVoice;
+    }
+
+    utterance.onstart = () => setSpeaking(true);
+    utterance.onend = () => setSpeaking(false);
+    utterance.onerror = () => setSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function toggleListening() {
+    if (listening) {
+      recognitionRef.current?.stop();
+      setListening(false);
+      setInterimText("");
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      alert("Voice input isn't supported in this browser. Please try Chrome or Safari.");
+      return;
+    }
+
+    // Stop Ella speaking when user starts talking
+    window.speechSynthesis?.cancel();
+    setSpeaking(false);
+
+    const recognition = new SR();
+    recognition.lang = "en-AU";
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    recognition.onstart = () => {
+      setListening(true);
+      setInterimText("");
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recognition.onresult = (event: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const transcript = Array.from(event.results as any[])
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((r: any) => r[0].transcript)
+        .join("");
+      setInterimText(transcript);
+
+      if (event.results[event.results.length - 1].isFinal) {
+        setListening(false);
+        setInterimText("");
+        recognition.stop();
+        if (transcript.trim()) {
+          setTimeout(() => send(transcript.trim()), 200);
+        }
+      }
+    };
+
+    recognition.onerror = () => {
+      setListening(false);
+      setInterimText("");
+    };
+
+    recognition.onend = () => {
+      setListening(false);
+      setInterimText("");
+    };
+
+    recognition.start();
+    recognitionRef.current = recognition;
+  }
+
   function send(text?: string) {
     const msg = (text || input).trim();
     if (!msg || loading) return;
     setInput("");
+    setInterimText("");
+    window.speechSynthesis?.cancel();
+    setSpeaking(false);
     setMessages((prev) => [...prev, { role: "user", content: msg }]);
     setLoading(true);
     setTimeout(() => {
@@ -162,6 +288,7 @@ export default function ChatAssistantPage() {
         },
       ]);
       setLoading(false);
+      speakText(response);
       setTimeout(() => inputRef.current?.focus(), 100);
     }, 800 + Math.random() * 600);
   }
@@ -171,17 +298,51 @@ export default function ChatAssistantPage() {
 
       {/* ── Header bar ─────────────────────────────────────────────── */}
       <div className="border-b border-gray-100 px-4 sm:px-6 py-3 flex items-center gap-3 bg-white flex-shrink-0 shadow-sm">
-        <EllaAvatar className="w-10 h-10 flex-shrink-0" />
+        {/* Avatar with speaking pulse ring */}
+        <div className="relative flex-shrink-0">
+          {speaking && (
+            <span className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ background: "#2d7a3a" }} />
+          )}
+          <EllaAvatar className="w-10 h-10 relative" />
+        </div>
+
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-gray-900 text-sm">Ella — Plant Nutrition Expert</p>
-          <p className="text-xs text-gray-400">Powered by BioCare agronomy · 25 formulations</p>
+          <p className="text-xs text-gray-400">
+            {speaking ? "Speaking…" : "Powered by BioCare agronomy · 25 formulations"}
+          </p>
         </div>
+
         <div className="hidden sm:flex items-center gap-3">
           <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ background: "#f0faf2", color: "#2d7a3a" }}>Lawns</span>
           <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ background: "#f0faf2", color: "#2d7a3a" }}>Gardens</span>
           <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ background: "#f0faf2", color: "#2d7a3a" }}>Farming</span>
         </div>
-        <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+
+        {/* Voice toggle */}
+        <button
+          onClick={() => setVoiceEnabled((v) => !v)}
+          title={voiceEnabled ? "Mute Ella" : "Unmute Ella"}
+          className="w-8 h-8 rounded-full flex items-center justify-center transition-all flex-shrink-0"
+          style={{
+            background: voiceEnabled ? "#f0faf2" : "#f3f4f6",
+            color: voiceEnabled ? "#2d7a3a" : "#9ca3af",
+          }}
+        >
+          {voiceEnabled ? (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m0 0l-3-3m3 3l3-3M9 12H3m6 0a3 3 0 000-6m0 6a3 3 0 010 6" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a6 6 0 00-6-6" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+            </svg>
+          )}
+        </button>
+
+        <div className="flex items-center gap-1.5 flex-shrink-0">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           <span className="text-xs text-gray-400">Online</span>
         </div>
@@ -196,16 +357,25 @@ export default function ChatAssistantPage() {
         {/* WELCOME STATE */}
         {!hasStarted && (
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-            {/* Ella intro */}
             <div className="text-center mb-10">
-              <EllaAvatar className="w-24 h-24 mx-auto mb-5" />
+              <div className="relative inline-block mb-5">
+                {speaking && (
+                  <span className="absolute inset-0 rounded-full animate-ping opacity-30" style={{ background: "#2d7a3a" }} />
+                )}
+                <EllaAvatar className="w-24 h-24 relative" />
+              </div>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Hi, I&apos;m Ella</h1>
               <p className="text-gray-500 max-w-md mx-auto leading-relaxed">
                 Healthy Earth&apos;s AI plant nutrition expert. Describe what&apos;s going on with your plants and I&apos;ll give you a specific, science-backed recommendation — free, instant, no account needed.
               </p>
+              <p className="text-xs text-gray-400 mt-3 flex items-center justify-center gap-1.5">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+                Tap the mic button to speak to Ella
+              </p>
             </div>
 
-            {/* Problem cards */}
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest text-center mb-5">
               What&apos;s the problem?
             </p>
@@ -246,11 +416,15 @@ export default function ChatAssistantPage() {
               return (
                 <div key={i} className={`flex gap-3 ${!isAssistant ? "flex-row-reverse" : ""}`}>
                   {isAssistant && (
-                    <EllaAvatar className="w-8 h-8 flex-shrink-0 self-start mt-0.5" />
+                    <div className="relative flex-shrink-0 self-start mt-0.5">
+                      {speaking && isLast && (
+                        <span className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ background: "#2d7a3a" }} />
+                      )}
+                      <EllaAvatar className="w-8 h-8 relative" />
+                    </div>
                   )}
 
                   <div className={`flex flex-col gap-2 ${isAssistant ? "flex-1 max-w-xl" : ""}`}>
-                    {/* Bubble */}
                     <div
                       className={`px-4 py-3.5 rounded-2xl text-sm ${
                         isAssistant
@@ -284,7 +458,7 @@ export default function ChatAssistantPage() {
                       </div>
                     )}
 
-                    {/* Follow-up suggestions (last assistant message only) */}
+                    {/* Follow-up suggestions */}
                     {isAssistant && isLast && !loading && msg.followUps && (
                       <div className="flex flex-col gap-1.5 pl-0.5 mt-1">
                         <p className="text-xs text-gray-400 font-medium">Suggested follow-ups:</p>
@@ -335,19 +509,62 @@ export default function ChatAssistantPage() {
 
       {/* ── Input bar ──────────────────────────────────────────────── */}
       <div className="px-4 sm:px-6 py-3 bg-white border-t border-gray-100 flex-shrink-0">
-        <div className="max-w-3xl mx-auto flex gap-2">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && send()}
-            placeholder="Describe your plant problem..."
-            className="flex-1 px-4 py-3 rounded-full border border-gray-200 text-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all bg-gray-50"
-          />
+        <div className="max-w-3xl mx-auto flex gap-2 items-center">
+          <div className="relative flex-1">
+            <input
+              ref={inputRef}
+              type="text"
+              value={listening ? interimText : input}
+              onChange={(e) => !listening && setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && !listening && send()}
+              placeholder={listening ? "Listening…" : "Describe your plant problem…"}
+              className="w-full pl-4 pr-4 py-3 rounded-full border text-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all"
+              style={{
+                background: listening ? "#fef2f2" : "#f9fafb",
+                borderColor: listening ? "#fca5a5" : "#e5e7eb",
+                color: listening ? "#dc2626" : undefined,
+              }}
+              readOnly={listening}
+            />
+            {listening && (
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-0.5 items-end h-4">
+                {[0, 1, 2, 1, 0].map((h, i) => (
+                  <div
+                    key={i}
+                    className="w-0.5 rounded-full bg-red-400"
+                    style={{
+                      height: `${6 + h * 4}px`,
+                      animation: "bounce 0.6s ease-in-out infinite",
+                      animationDelay: `${i * 0.1}s`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Mic button */}
+          <button
+            onClick={toggleListening}
+            title={listening ? "Stop listening" : "Speak to Ella"}
+            className="w-11 h-11 rounded-full flex items-center justify-center transition-all flex-shrink-0 relative"
+            style={{
+              background: listening ? "#dc2626" : "#f0faf2",
+              color: listening ? "white" : "#2d7a3a",
+            }}
+          >
+            {listening && (
+              <span className="absolute inset-0 rounded-full animate-ping opacity-50 bg-red-400" />
+            )}
+            <svg className="w-5 h-5 relative" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+          </button>
+
+          {/* Send button */}
           <button
             onClick={() => send()}
-            disabled={!input.trim() || loading}
+            disabled={(!input.trim() && !interimText.trim()) || loading || listening}
             className="w-11 h-11 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 flex-shrink-0"
             style={{ background: "#2d7a3a" }}
             aria-label="Send message"
