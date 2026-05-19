@@ -111,32 +111,29 @@ function getResponse(msg: string): string {
 function stripMarkdown(text: string): string {
   return text
     .replace(/\*\*(.*?)\*\*/g, "$1")
-    .replace(/\*/g, "")
-    .replace(/•\s?/g, "")
-    .replace(/›\s?/g, "")
-    .replace(/\n\n/g, ". ")
-    .replace(/\n/g, " ")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/^[•\-–]\s+/gm, "")
+    .replace(/^\d+\.\s+/gm, "")
+    .replace(/#+\s+/g, "")
+    .replace(/\n+/g, " ")
     .trim();
 }
 
 function renderContent(text: string) {
-  return text.split("\n").map((line, i) => {
-    if (line === "") return <div key={i} className="h-2" />;
-    const isBullet = line.startsWith("• ") || line.startsWith("**1.**") || line.startsWith("**2.**") || line.startsWith("**3.**");
-    const parts = line.split(/\*\*(.*?)\*\*/g);
-    const rendered = parts.map((part, j) =>
-      j % 2 === 1 ? <strong key={j} className="font-semibold">{part}</strong> : part
-    );
-    if (isBullet) {
-      return (
-        <div key={i} className="flex gap-2 mb-1">
-          <span className="mt-0.5 flex-shrink-0 text-green-500">›</span>
-          <p className="leading-relaxed">{rendered}</p>
-        </div>
-      );
-    }
-    return <p key={i} className="mb-1 leading-relaxed">{rendered}</p>;
-  });
+  // Strip any markdown formatting and render as plain flowing text
+  const plain = text
+    .replace(/\*\*(.*?)\*\*/g, "$1")   // remove bold
+    .replace(/\*(.*?)\*/g, "$1")        // remove italics
+    .replace(/^[•\-–]\s+/gm, "")       // remove bullet points
+    .replace(/^\d+\.\s+/gm, "")        // remove numbered lists
+    .replace(/#+\s+/g, "")             // remove headings
+    .trim();
+
+  return plain.split(/\n\n+/).map((para, i) => (
+    <p key={i} className={`leading-relaxed${i > 0 ? " mt-2" : ""}`}>
+      {para.replace(/\n/g, " ").trim()}
+    </p>
+  ));
 }
 
 export default function ChatAssistantPage() {
