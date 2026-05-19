@@ -120,7 +120,7 @@ export default function ProductsPage() {
                     <div className="flex gap-2">
                       <Link href={`/our-products/${product.id}`} className="flex-1 text-center py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:opacity-90" style={{ background: "#2d7a3a" }}>
                         View Details
-                      </button>
+                      </Link>
                       <button onClick={() => (window as any).voiceflow?.chat?.open?.()} className="px-3 py-2.5 rounded-full border-2 text-sm font-semibold transition-all hover:bg-green-50" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
                         Ask Ella
                       </button>
@@ -139,7 +139,7 @@ export default function ProductsPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Find a Retailer Near You</h2>
           <p className="text-gray-500 mb-6">Healthy Earth products are available through agricultural merchants, garden centres and farm supply stores across Australia.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/retailers" className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90" style={{ background: "#2d7a3a" }}>Find Retailers</button>
+            <Link href="/retailers" className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90" style={{ background: "#2d7a3a" }}>Find Retailers</Link>
             <button onClick={() => (window as any).voiceflow?.chat?.open?.()} className="px-8 py-3 rounded-full font-semibold border-2 transition-all hover:bg-green-50" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>Ask Ella Which Product</button>
           </div>
         </div>
