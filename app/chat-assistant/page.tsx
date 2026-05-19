@@ -120,20 +120,59 @@ function stripMarkdown(text: string): string {
 }
 
 function renderContent(text: string) {
-  // Strip any markdown formatting and render as plain flowing text
-  const plain = text
-    .replace(/\*\*(.*?)\*\*/g, "$1")   // remove bold
-    .replace(/\*(.*?)\*/g, "$1")        // remove italics
-    .replace(/^[•\-–]\s+/gm, "")       // remove bullet points
-    .replace(/^\d+\.\s+/gm, "")        // remove numbered lists
-    .replace(/#+\s+/g, "")             // remove headings
+  // Strip stray markdown formatting
+  const clean = text
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/#+\s+/g, "")
     .trim();
 
-  return plain.split(/\n\n+/).map((para, i) => (
-    <p key={i} className={`leading-relaxed${i > 0 ? " mt-2" : ""}`}>
-      {para.replace(/\n/g, " ").trim()}
-    </p>
-  ));
+  const lines = clean.split("\n").map((l) => l.trim()).filter((l) => l.length > 0);
+  const elements: React.ReactNode[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // "Fix:" label — render as a small section header
+    if (/^fix:/i.test(line)) {
+      elements.push(
+        <p key={`fix-${i}`} className="mt-3 mb-1 text-xs font-semibold uppercase tracking-widest" style={{ color: "#2d7a3a" }}>
+          Fix
+        </p>
+      );
+      i++;
+      continue;
+    }
+
+    // Dash list item
+    if (line.startsWith("- ")) {
+      const content = line.slice(2).trim();
+      elements.push(
+        <p key={i} className="text-sm leading-relaxed my-1 pl-3 border-l-2" style={{ borderColor: "#2d7a3a" }}>
+          {content}
+        </p>
+      );
+      i++;
+      continue;
+    }
+
+    // Regular sentence(s) — group consecutive non-list lines as a paragraph
+    const para: string[] = [];
+    while (i < lines.length && !lines[i].startsWith("- ") && !/^fix:/i.test(lines[i])) {
+      para.push(lines[i]);
+      i++;
+    }
+    if (para.length > 0) {
+      elements.push(
+        <p key={`p-${i}`} className="leading-relaxed text-sm">
+          {para.join(" ")}
+        </p>
+      );
+    }
+  }
+
+  return <div className="space-y-0.5">{elements}</div>;
 }
 
 export default function ChatAssistantPage() {
