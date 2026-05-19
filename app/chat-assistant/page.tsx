@@ -267,16 +267,85 @@ export default function ChatAssistantPage() {
     recognitionRef.current = recognition;
   }
 
-  function send(text?: string) {
+  async function send(text?: string) {
     const msg = (text || input).trim();
     if (!msg || loading) return;
     setInput("");
     setInterimText("");
     window.speechSynthesis?.cancel();
     setSpeaking(false);
-    setMessages((prev) => [...prev, { role: "user", content: msg }]);
+
+    const newMessages: Message[] = [...messages, { role: "user", content: msg }];
+    setMessages(newMessages);
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: newMessages.map(({ role, content }) => ({ role, content })),
+        }),
+      });
+
+      if (!res.ok || !res.body) throw new Error("API error");
+
+      setLoading(false);
+
+      // Stream the response token by token
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+
+      // Add empty assistant message to stream into
+      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split("\n").filter((l) => l.startsWith("data: "));
+
+        for (const line of lines) {
+          const data = line.slice(6);
+          if (data === "[DONE]") break;
+          try {
+            const parsed = JSON.parse(data);
+            const token = parsed.choices?.[0]?.delta?.content ?? "";
+            if (token) {
+              fullText += token;
+              setMessages((prev) => {
+                const updated = [...prev];
+                updated[updated.length - 1] = {
+                  role: "assistant",
+                  content: fullText,
+                };
+                return updated;
+              });
+            }
+          } catch {
+            // ignore malformed chunks
+          }
+        }
+      }
+
+      // Finalise with product chips and follow-ups
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = {
+          role: "assistant",
+          content: fullText,
+          products: detectProducts(fullText),
+          followUps: detectFollowUps(fullText),
+        };
+        return updated;
+      });
+
+      speakText(fullText);
+      setTimeout(() => inputRef.current?.focus(), 100);
+    } catch {
+      // Fallback to local response if API fails
       const response = getResponse(msg);
       setMessages((prev) => [
         ...prev,
@@ -290,7 +359,7 @@ export default function ChatAssistantPage() {
       setLoading(false);
       speakText(response);
       setTimeout(() => inputRef.current?.focus(), 100);
-    }, 800 + Math.random() * 600);
+    }
   }
 
   return (
