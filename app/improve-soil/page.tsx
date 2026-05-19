@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import OpenEllaButton from "@/components/OpenEllaButton";
 
 export const metadata: Metadata = {
   title: "How to Improve Soil Health in Australia | Healthy Earth",
@@ -64,7 +65,7 @@ export default function ImproveSoilPage() {
           <div className="mt-12 p-6 rounded-2xl" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
             <h3 className="text-xl font-bold text-white mb-2">Not sure where to start?</h3>
             <p className="text-white/75 mb-4">Tell Ella about your soil &mdash; type, location, current issues &mdash; and she&apos;ll give you a specific improvement program.</p>
-            <Link href="/chat-assistant?q=improve+soil+health" className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold bg-white" style={{ color: "#2d7a3a" }}>Ask Ella</Link>
+            <OpenEllaButton className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold bg-white" style={{ color: "#2d7a3a" }}>Ask Ella</OpenEllaButton>
           </div>
         </div>
       </section>

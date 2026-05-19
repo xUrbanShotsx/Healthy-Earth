@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import OpenEllaButton from "@/components/OpenEllaButton";
 
 export const metadata: Metadata = {
   title: "About Healthy Earth | Australian Plant Nutrition by BioCare Fertilisers",
@@ -144,7 +145,7 @@ export default function AboutPage() {
           <p className="text-white/70 mb-8">Browse our products or chat with Ella to get a personalised recommendation — free, instant, and tailored to your situation.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/products" className="px-8 py-4 rounded-full font-semibold bg-white hover:bg-gray-50 transition-all" style={{ color: "#2d7a3a" }}>Browse Products</Link>
-            <Link href="/chat-assistant" className="px-8 py-4 rounded-full font-semibold border-2 border-white text-white hover:bg-white/10 transition-all">Ask Ella</Link>
+            <OpenEllaButton className="px-8 py-4 rounded-full font-semibold border-2 border-white text-white hover:bg-white/10 transition-all">Ask Ella</OpenEllaButton>
           </div>
         </div>
       </section>

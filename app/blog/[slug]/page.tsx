@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import OpenEllaButton from "@/components/OpenEllaButton";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { blogPosts, getBlogPost } from "@/lib/blog";
@@ -175,13 +176,12 @@ export default async function BlogPostPage({ params }: Props) {
               <p className="text-sm text-white/65 mb-4 leading-relaxed">
                 Describe your plant problem and Ella will recommend the right product.
               </p>
-              <Link
-                href="/chat-assistant"
+              <OpenEllaButton
                 className="block text-center px-4 py-2.5 rounded-xl bg-white text-sm font-semibold transition-all hover:bg-green-50"
                 style={{ color: "#1a5227" }}
               >
                 Start chatting →
-              </Link>
+              </OpenEllaButton>
             </div>
 
             {/* Related posts */}

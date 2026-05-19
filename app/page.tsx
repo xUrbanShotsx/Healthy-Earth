@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import OpenEllaButton from "@/components/OpenEllaButton";
 import Image from "next/image";
 import { Icon } from "@/components/Icon";
 
@@ -48,10 +49,10 @@ export default function HomePage() {
               <Link href="/products" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base transition-all hover:opacity-90 shadow-lg" style={{ background: "#2d7a3a", color: "white" }}>
                 Browse Products
               </Link>
-              <Link href="/chat-assistant" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base border border-white/30 text-white transition-all hover:bg-white/10" style={{ backdropFilter: "blur(8px)" }}>
+              <OpenEllaButton className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base border border-white/30 text-white transition-all hover:bg-white/10" style={{ backdropFilter: "blur(8px)" }}>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
                 Ask Ella — Free
-              </Link>
+              </OpenEllaButton>
             </div>
           </div>
         </div>
@@ -290,10 +291,10 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              <Link href="/chat-assistant" className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-base transition-all hover:opacity-90" style={{ background: "#2d7a3a", color: "white" }}>
+              <OpenEllaButton className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-base transition-all hover:opacity-90" style={{ background: "#2d7a3a", color: "white" }}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
                 Chat with Ella
-              </Link>
+              </OpenEllaButton>
               <p className="text-white/30 text-xs mt-3">Ella provides general guidance. Always follow product label directions.</p>
             </div>
           </div>
@@ -342,9 +343,9 @@ export default function HomePage() {
             <Link href="/products" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-white hover:opacity-90 transition-all shadow-md" style={{ background: "#2d7a3a" }}>
               Browse all products
             </Link>
-            <Link href="/chat-assistant" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold border-2 hover:bg-green-50 transition-all" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
+            <OpenEllaButton className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold border-2 hover:bg-green-50 transition-all" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
               Ask Ella instead
-            </Link>
+            </OpenEllaButton>
           </div>
         </div>
       </section>

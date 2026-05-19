@@ -1,4 +1,5 @@
 import Link from "next/link";
+import OpenEllaButton from "@/components/OpenEllaButton";
 import Image from "next/image";
 
 export default function Footer() {
@@ -58,8 +59,8 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Help & Support</h3>
             <ul className="space-y-2.5">
+              <li><OpenEllaButton className="text-sm text-white/65 hover:text-white transition-colors">Plant Problem Solver</OpenEllaButton></li>
               {[
-                ["Plant Problem Solver", "/chat-assistant"],
                 ["Yellow Leaves", "/yellow-leaves"],
                 ["Lawn Not Growing", "/lawn-fertiliser"],
                 ["Improve Soil Health", "/improve-soil"],

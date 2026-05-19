@@ -200,8 +200,7 @@ export default function BlogPage() {
             <p className="text-white/60 text-sm mb-7 max-w-md mx-auto">
               Describe your symptoms and Ella will diagnose the issue and recommend the right product.
             </p>
-            <Link
-              href="/chat-assistant"
+            <button onClick={() => (window as any).voiceflow?.chat?.open?.()}
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-sm transition-all hover:opacity-90 shadow-lg"
               style={{ background: "white", color: "#1a5227" }}
             >
@@ -209,7 +208,7 @@ export default function BlogPage() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </Link>
+            </button>
           </div>
         </div>
       </section>

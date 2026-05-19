@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import OpenEllaButton from "@/components/OpenEllaButton";
 
 export const metadata: Metadata = {
   title: "Yellow Leaves on Plants — Causes & Fertiliser Fix | Healthy Earth",
@@ -42,9 +43,9 @@ export default function YellowLeavesPage() {
           <div className="mt-10 p-6 rounded-2xl" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
             <h3 className="text-xl font-bold text-white mb-2">Not sure which it is?</h3>
             <p className="text-white/75 mb-4">Describe your symptoms to Ella and she&apos;ll help you identify the cause and recommend the right product.</p>
-            <Link href="/chat-assistant?q=yellow+leaves" className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold bg-white transition-all hover:bg-green-50" style={{ color: "#2d7a3a" }}>
+            <OpenEllaButton className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold bg-white transition-all hover:bg-green-50" style={{ color: "#2d7a3a" }}>
               Ask Ella About Yellow Leaves
-            </Link>
+            </OpenEllaButton>
           </div>
         </div>
       </section>

@@ -10,6 +10,11 @@ const productDropdown = [
   { label: "Farming", href: "/products?category=Farming", icon: "wheat" as const, desc: "Broadacre & horticulture" },
 ];
 
+function openElla() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).voiceflow?.chat?.open?.();
+}
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -75,16 +80,16 @@ export default function Header() {
               )}
             </div>
 
-            <Link href="/chat-assistant" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Plant Problem Solver</Link>
+            <button onClick={openElla} className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Plant Problem Solver</button>
             <Link href="/blog" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Blog</Link>
             <Link href="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">About</Link>
           </nav>
 
           {/* CTAs */}
           <div className="hidden md:flex items-center gap-2">
-            <Link href="/chat-assistant" className="text-sm font-semibold px-4 py-2 rounded-full border-2 transition-all hover:bg-green-700 hover:text-white hover:border-green-700" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
+            <button onClick={openElla} className="text-sm font-semibold px-4 py-2 rounded-full border-2 transition-all hover:bg-green-700 hover:text-white hover:border-green-700" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
               Ask Ella
-            </Link>
+            </button>
             <Link href="/products" className="text-sm font-semibold px-4 py-2 rounded-full text-white transition-all hover:opacity-90 shadow-sm" style={{ background: "#2d7a3a" }}>
               Browse Products
             </Link>
@@ -110,11 +115,11 @@ export default function Header() {
                 <Link key={item.href} href={item.href} className="block py-1.5 text-sm text-gray-700" onClick={() => setMenuOpen(false)}>{"icon" in item ? `${item.icon} ` : ""}{item.label}</Link>
               ))}
             </div>
-            <Link href="/chat-assistant" className="block px-4 py-2.5 text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>Plant Problem Solver</Link>
+            <button onClick={() => { openElla(); setMenuOpen(false); }} className="block w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700">Plant Problem Solver</button>
             <Link href="/blog" className="block px-4 py-2.5 text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>Blog</Link>
             <Link href="/about" className="block px-4 py-2.5 text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>About</Link>
             <div className="px-4 pt-3 flex flex-col gap-2">
-              <Link href="/chat-assistant" className="text-center text-sm font-semibold py-2.5 rounded-full border-2" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }} onClick={() => setMenuOpen(false)}>Ask Ella</Link>
+              <button onClick={() => { openElla(); setMenuOpen(false); }} className="text-center text-sm font-semibold py-2.5 rounded-full border-2" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>Ask Ella</button>
               <Link href="/products" className="text-center text-sm font-semibold py-2.5 rounded-full text-white" style={{ background: "#2d7a3a" }} onClick={() => setMenuOpen(false)}>Browse Products</Link>
             </div>
           </div>

@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Footer from "./Footer";
 
-const NO_FOOTER_PATHS = ["/chat-assistant", "/chat"];
+const NO_FOOTER_PATHS = ["/chat"];  // /chat-assistant removed — page deleted
 
 export default function ConditionalFooter() {
   const pathname = usePathname();
