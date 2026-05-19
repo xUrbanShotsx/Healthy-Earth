@@ -31,7 +31,13 @@ export default function RootLayout({
                 url: 'https://general-runtime.voiceflow.com',
                 voice: {
                   url: "https://runtime-api.voiceflow.com"
-                }
+                },
+                assistant: {
+                  name: 'Ella',
+                  description: 'Healthy Earth Plant Expert',
+                  image: 'https://www.healthyearth.com.au/ella-icon.svg',
+                },
+                stylesheet: 'https://www.healthyearth.com.au/voiceflow-theme.css',
               });
             }
             v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs";
