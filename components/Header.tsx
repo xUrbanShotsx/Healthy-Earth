@@ -37,7 +37,7 @@ export default function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
-            <Image src="/My Logo.png" alt="Healthy BioCare" width={340} height={150} className="h-20 w-auto object-contain" priority />
+            <Image src="/My Logo.png" alt="Healthy BioCare" width={420} height={185} className="h-28 w-auto object-contain" priority />
           </Link>
 
           {/* Desktop nav */}
