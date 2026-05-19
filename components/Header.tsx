@@ -76,6 +76,7 @@ export default function Header() {
             </div>
 
             <Link href="/chat-assistant" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Plant Problem Solver</Link>
+            <Link href="/blog" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Blog</Link>
             <Link href="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">About</Link>
           </nav>
 
@@ -110,6 +111,7 @@ export default function Header() {
               ))}
             </div>
             <Link href="/chat-assistant" className="block px-4 py-2.5 text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>Plant Problem Solver</Link>
+            <Link href="/blog" className="block px-4 py-2.5 text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>Blog</Link>
             <Link href="/about" className="block px-4 py-2.5 text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>About</Link>
             <div className="px-4 pt-3 flex flex-col gap-2">
               <Link href="/chat-assistant" className="text-center text-sm font-semibold py-2.5 rounded-full border-2" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }} onClick={() => setMenuOpen(false)}>Ask Ella</Link>
