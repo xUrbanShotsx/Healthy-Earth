@@ -55,6 +55,7 @@ export const products: Product[] = [
     sizes: ["500 mL", "1 L", "5 L"],
     color: "#c2185b",
     icon: "bloom",
+    image: "/bloom-n-yield.png",
     featured: true,
     tags: ["flowering", "fruiting", "bloom", "biostimulant", "berries", "vegetables", "ornamentals"],
   },
