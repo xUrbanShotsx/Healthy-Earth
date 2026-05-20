@@ -27,10 +27,10 @@ export default function HomePage() {
             loop
             playsInline
             className="absolute inset-0 w-full h-full object-cover object-top"
-            style={{ transform: "scaleX(-1)" }}
+            style={{ objectPosition: "right top" }}
           />
-          {/* Gradient: semi-transparent on left so Ella shows behind text, darkens toward right */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,35,15,0.75) 0%, rgba(10,35,15,0.65) 35%, rgba(10,35,15,0.50) 65%, rgba(10,35,15,0.70) 100%)" }} />
+          {/* Gradient: strong dark on left for text readability, fades to near-transparent on right so Ella shows clearly */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,35,15,0.92) 0%, rgba(10,35,15,0.80) 35%, rgba(10,35,15,0.30) 65%, rgba(10,35,15,0.0) 100%)" }} />
         </div>
 
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
