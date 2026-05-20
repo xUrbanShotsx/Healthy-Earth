@@ -26,7 +26,7 @@ export default function HomePage() {
             muted
             loop
             playsInline
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover object-top"
           />
           {/* Gradient: strong dark on left for text readability, fades to near-transparent on right so Ella shows clearly */}
           <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,35,15,0.92) 0%, rgba(10,35,15,0.80) 35%, rgba(10,35,15,0.30) 65%, rgba(10,35,15,0.0) 100%)" }} />
