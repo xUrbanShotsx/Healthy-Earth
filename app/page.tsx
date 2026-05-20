@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import OpenEllaButton from "@/components/OpenEllaButton";
 import { Icon } from "@/components/Icon";
+import HeroVideo from "@/components/HeroVideo";
 
 export const metadata: Metadata = {
   title: "Healthy Earth | Fertilisers & Plant Nutrition for Australian Gardens & Farms",
@@ -20,14 +21,7 @@ export default function HomePage() {
       {/* ── HERO ────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden" style={{ minHeight: "92vh", display: "flex", alignItems: "center" }}>
         <div className="absolute inset-0">
-          <video
-            src="/ella-hero.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover object-center md:object-right-top"
-          />
+          <HeroVideo />
           {/* Gradient: strong dark on left for text readability, fades to near-transparent on right so Ella shows clearly */}
           <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,35,15,0.92) 0%, rgba(10,35,15,0.80) 35%, rgba(10,35,15,0.30) 65%, rgba(10,35,15,0.0) 100%)" }} />
         </div>
