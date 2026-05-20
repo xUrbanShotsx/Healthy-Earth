@@ -27,13 +27,14 @@ export default function HomePage() {
             loop
             playsInline
             className="absolute inset-0 w-full h-full object-cover object-top"
+            style={{ transform: "scaleX(-1)" }}
           />
-          {/* Gradient: strong dark on left for text readability, fades to near-transparent on right so Ella shows clearly */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,35,15,0.92) 0%, rgba(10,35,15,0.80) 35%, rgba(10,35,15,0.30) 65%, rgba(10,35,15,0.0) 100%)" }} />
+          {/* Gradient: transparent on left (Ella), dark on right for text readability */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to left, rgba(10,35,15,0.95) 0%, rgba(10,35,15,0.85) 35%, rgba(10,35,15,0.20) 65%, rgba(10,35,15,0.0) 100%)" }} />
         </div>
 
-        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <div className="max-w-3xl">
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 flex justify-end">
+          <div className="max-w-xl w-full">
             <div className="inline-flex items-center gap-2 mb-8" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "99px", padding: "6px 16px", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.12)" }}>
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               <span className="text-white/80 text-xs font-medium tracking-wide">BioCare Fertilisers · New South Wales, Australia</span>
