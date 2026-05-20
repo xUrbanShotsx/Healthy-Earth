@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import OpenEllaButton from "@/components/OpenEllaButton";
-import Image from "next/image";
 import { Icon } from "@/components/Icon";
 
 export const metadata: Metadata = {
@@ -21,14 +20,16 @@ export default function HomePage() {
       {/* ── HERO ────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden" style={{ minHeight: "92vh", display: "flex", alignItems: "center" }}>
         <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80"
-            alt="Australian crop farm"
-            fill
-            className="object-cover"
-            priority
+          <video
+            src="/ella-hero.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(115deg, rgba(10,35,15,0.92) 0%, rgba(20,65,30,0.80) 55%, rgba(10,35,15,0.55) 100%)" }} />
+          {/* Gradient: strong dark on left for text readability, fades to near-transparent on right so Ella shows clearly */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,35,15,0.92) 0%, rgba(10,35,15,0.80) 35%, rgba(10,35,15,0.30) 65%, rgba(10,35,15,0.0) 100%)" }} />
         </div>
 
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
