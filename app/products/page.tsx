@@ -85,7 +85,7 @@ export default function ProductsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((product: Product) => (
                 <div key={product.id} className="group bg-white rounded-2xl overflow-hidden border border-white shadow-md hover:shadow-2xl transition-all hover:-translate-y-1 flex flex-col">
-                  <div className="h-44 flex items-center justify-center overflow-hidden" style={{ background: `linear-gradient(135deg, ${product.color}12, ${product.color}30)` }}>
+                  <div className="h-44 flex items-center justify-center overflow-hidden" style={{ background: "linear-gradient(135deg, #f5f2ec, #faf8f4)" }}>
                     {product.image ? (
                       <Image src={product.image} alt={product.shortName} width={320} height={176} className="w-full h-full object-contain p-2" />
                     ) : (
