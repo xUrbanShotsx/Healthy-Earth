@@ -47,7 +47,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {/* Image */}
             <div className="rounded-3xl overflow-hidden flex items-center justify-center h-80 lg:h-96" style={{ background: `linear-gradient(135deg, ${product.color}15, ${product.color}35)` }}>
               {product.image ? (
-                <Image src={product.image} alt={product.shortName} width={600} height={384} className="w-full h-full object-cover" />
+                <Image src={product.image} alt={product.shortName} width={600} height={384} className="w-full h-full object-contain p-4" />
               ) : (
                 <span style={{ color: product.color }}><Icon name={product.icon} className="w-40 h-40" /></span>
               )}
