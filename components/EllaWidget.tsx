@@ -11,27 +11,6 @@ const SUGGESTIONS = [
   "My soil is rock hard — help!",
 ];
 
-function getAussieVoice(): SpeechSynthesisVoice | null {
-  const voices = window.speechSynthesis.getVoices();
-  return (
-    voices.find((v) => v.lang === "en-AU" && /female|karen|catherine|lee/i.test(v.name)) ||
-    voices.find((v) => v.lang === "en-AU") ||
-    voices.find((v) => v.lang.startsWith("en") && /female|zira|samantha|victoria/i.test(v.name)) ||
-    voices.find((v) => v.lang.startsWith("en")) ||
-    null
-  );
-}
-
-function speakText(text: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.voice = getAussieVoice();
-  utterance.rate = 1.05;
-  utterance.pitch = 1.05;
-  utterance.volume = 1;
-  window.speechSynthesis.speak(utterance);
-}
 
 export default function EllaWidget() {
   const [open, setOpen] = useState(false);
@@ -45,6 +24,7 @@ export default function EllaWidget() {
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
@@ -70,16 +50,12 @@ export default function EllaWidget() {
   }, [open]);
 
   useEffect(() => {
-    if (!open) window.speechSynthesis?.cancel();
+    if (!open) {
+      audioRef.current?.pause();
+      audioRef.current = null;
+      setSpeaking(false);
+    }
   }, [open]);
-
-  useEffect(() => {
-    if (!speaking) return;
-    const interval = setInterval(() => {
-      if (!window.speechSynthesis.speaking) setSpeaking(false);
-    }, 300);
-    return () => clearInterval(interval);
-  }, [speaking]);
 
   useEffect(() => {
     if (fullscreen && open) {
@@ -91,7 +67,8 @@ export default function EllaWidget() {
   }, [fullscreen, open]);
 
   const stopSpeaking = useCallback(() => {
-    window.speechSynthesis?.cancel();
+    audioRef.current?.pause();
+    audioRef.current = null;
     setSpeaking(false);
   }, []);
 
@@ -99,7 +76,8 @@ export default function EllaWidget() {
     const text = (textOverride ?? input).trim();
     if (!text || loading) return;
 
-    window.speechSynthesis?.cancel();
+    audioRef.current?.pause();
+    audioRef.current = null;
     setSpeaking(false);
 
     const newMessages: Message[] = [...messages, { role: "user", content: text }];
@@ -141,7 +119,22 @@ export default function EllaWidget() {
       }
 
       if (voiceEnabled && assistantText) {
-        setTimeout(() => { speakText(assistantText); setSpeaking(true); }, 100);
+        try {
+          const audioRes = await fetch("/api/speak", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: assistantText }),
+          });
+          if (audioRes.ok) {
+            const blob = await audioRes.blob();
+            const url = URL.createObjectURL(blob);
+            const audio = new Audio(url);
+            audioRef.current = audio;
+            setSpeaking(true);
+            audio.play();
+            audio.onended = () => { URL.revokeObjectURL(url); setSpeaking(false); };
+          }
+        } catch { /* fall back to silence if TTS fails */ }
       }
     } catch {
       setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, something went wrong. Give it another go in a sec!" }]);
@@ -158,7 +151,8 @@ export default function EllaWidget() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) { alert("Voice input needs Chrome or Safari."); return; }
-    window.speechSynthesis?.cancel();
+    audioRef.current?.pause();
+    audioRef.current = null;
     setSpeaking(false);
     const rec = new SR();
     rec.lang = "en-AU";
