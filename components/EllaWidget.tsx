@@ -58,7 +58,7 @@ export default function EllaWidget() {
     }
     window.addEventListener("ella:open", handleOpen);
     return () => window.removeEventListener("ella:open", handleOpen);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -81,7 +81,6 @@ export default function EllaWidget() {
     return () => clearInterval(interval);
   }, [speaking]);
 
-  // Lock body scroll in fullscreen
   useEffect(() => {
     if (fullscreen && open) {
       document.body.style.overflow = "hidden";
@@ -91,16 +90,18 @@ export default function EllaWidget() {
     return () => { document.body.style.overflow = ""; };
   }, [fullscreen, open]);
 
-  const stopSpeaking = () => {
+  const stopSpeaking = useCallback(() => {
     window.speechSynthesis?.cancel();
     setSpeaking(false);
-  };
+  }, []);
 
   const sendMessage = useCallback(async (textOverride?: string) => {
     const text = (textOverride ?? input).trim();
     if (!text || loading) return;
 
-    stopSpeaking();
+    window.speechSynthesis?.cancel();
+    setSpeaking(false);
+
     const newMessages: Message[] = [...messages, { role: "user", content: text }];
     setMessages(newMessages);
     setInput("");
@@ -149,15 +150,16 @@ export default function EllaWidget() {
     }
   }, [input, loading, messages, voiceEnabled]);
 
-  function handleKeyDown(e: React.KeyboardEvent) {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  }
+  }, [sendMessage]);
 
   function startListening() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) { alert("Voice input needs Chrome or Safari."); return; }
-    stopSpeaking();
+    window.speechSynthesis?.cancel();
+    setSpeaking(false);
     const rec = new SR();
     rec.lang = "en-AU";
     rec.interimResults = false;
@@ -175,12 +177,41 @@ export default function EllaWidget() {
   }
 
   function stopListening() { recognitionRef.current?.stop(); setListening(false); }
-
   function close() { setOpen(false); stopSpeaking(); }
 
-  /* ── Shared sub-components ─────────────────────────────── */
+  // ── Shared JSX pieces (plain variables, not components) ──
 
-  const MessagesArea = ({ compact }: { compact?: boolean }) => (
+  const voiceToggleJsx = (
+    <button
+      onClick={() => { setVoiceEnabled((v) => !v); if (speaking) stopSpeaking(); }}
+      aria-label={voiceEnabled ? "Mute Ella's voice" : "Unmute Ella's voice"}
+      className="text-white/70 hover:text-white transition-colors p-1 flex-shrink-0"
+    >
+      {voiceEnabled
+        ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728" />
+          </svg>
+        : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m2-2l-2 2m0 0l-2 2" />
+          </svg>}
+    </button>
+  );
+
+  const disclaimerJsx = (
+    <div className="flex-shrink-0 px-4 py-1.5 text-center" style={{ background: "#f9f6f0", borderTop: "1px solid #ede9e1" }}>
+      <p className="text-xs text-gray-400 leading-snug">Ella&apos;s advice is general in nature. Always read the product label. Healthy Earth does not guarantee results for every situation.</p>
+    </div>
+  );
+
+  const dotsJsx = (
+    <span className="flex gap-1 items-center py-0.5">
+      {[0, 150, 300].map((d) => <span key={d} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+    </span>
+  );
+
+  const messagesJsx = (compact: boolean) => (
     <div className={`flex-1 overflow-y-auto ${compact ? "px-4 py-3 space-y-2.5" : "px-6 py-6 space-y-4"}`} style={{ background: compact ? "#f9f6f0" : "#fafaf8" }}>
       {messages.length === 0 && (
         <div className={`text-center ${compact ? "py-4" : "py-10"}`}>
@@ -194,11 +225,8 @@ export default function EllaWidget() {
           {!compact && (
             <div className="mt-6 flex flex-wrap gap-2 justify-center">
               {SUGGESTIONS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => sendMessage(s)}
-                  className="text-xs px-3 py-1.5 rounded-full border transition-all hover:bg-green-50 hover:border-green-400 hover:text-green-700 text-gray-600 border-gray-200"
-                >
+                <button key={s} onClick={() => sendMessage(s)}
+                  className="text-xs px-3 py-1.5 rounded-full border transition-all hover:bg-green-50 hover:border-green-400 hover:text-green-700 text-gray-600 border-gray-200">
                   {s}
                 </button>
               ))}
@@ -220,11 +248,7 @@ export default function EllaWidget() {
               ? { background: "linear-gradient(135deg, #1a5227, #2d7a3a)", color: "white", borderBottomRightRadius: "4px" }
               : { background: "white", color: "#1f2937", borderBottomLeftRadius: "4px", boxShadow: "0 1px 3px rgba(0,0,0,0.08)", border: "1px solid #f0ede8" }}
           >
-            {msg.content || (loading && i === messages.length - 1
-              ? <span className="flex gap-1 items-center py-0.5">
-                  {[0, 150, 300].map((d) => <span key={d} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
-                </span>
-              : "")}
+            {msg.content || (loading && i === messages.length - 1 ? dotsJsx : "")}
           </div>
         </div>
       ))}
@@ -233,9 +257,7 @@ export default function EllaWidget() {
         <div className="flex justify-start items-end gap-2">
           <div className={`rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 ${compact ? "w-6 h-6 text-xs" : "w-8 h-8 text-sm"}`} style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>E</div>
           <div className="px-3 py-2.5 rounded-2xl bg-white border border-gray-100 shadow-sm" style={{ borderBottomLeftRadius: "4px" }}>
-            <span className="flex gap-1 items-center py-0.5">
-              {[0, 150, 300].map((d) => <span key={d} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
-            </span>
+            {dotsJsx}
           </div>
         </div>
       )}
@@ -243,13 +265,7 @@ export default function EllaWidget() {
     </div>
   );
 
-  const Disclaimer = () => (
-    <div className="flex-shrink-0 px-4 py-1.5 text-center" style={{ background: "#f9f6f0", borderTop: "1px solid #ede9e1" }}>
-      <p className="text-xs text-gray-400 leading-snug">Ella&apos;s advice is general in nature. Always read the product label. Healthy Earth does not guarantee results for every situation.</p>
-    </div>
-  );
-
-  const InputBar = ({ compact }: { compact?: boolean }) => (
+  const inputBarJsx = (compact: boolean) => (
     <div className={`flex-shrink-0 bg-white border-t border-gray-100 ${compact ? "px-3 py-2.5" : "px-4 py-4"}`}>
       {speaking && (
         <div className="flex items-center gap-2 mb-2 px-1">
@@ -303,56 +319,28 @@ export default function EllaWidget() {
     </div>
   );
 
-  const VoiceToggle = () => (
-    <button
-      onClick={() => { setVoiceEnabled((v) => !v); if (speaking) stopSpeaking(); }}
-      aria-label={voiceEnabled ? "Mute Ella's voice" : "Unmute Ella's voice"}
-      className="text-white/70 hover:text-white transition-colors p-1 flex-shrink-0"
-    >
-      {voiceEnabled
-        ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728" />
-          </svg>
-        : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m2-2l-2 2m0 0l-2 2" />
-          </svg>}
-    </button>
-  );
-
   /* ── Fullscreen mode ───────────────────────────────────── */
   if (open && fullscreen) {
     return (
       <div className="fixed inset-0 z-50 flex" style={{ background: "#fafaf8" }}>
-
-        {/* Left panel — branding + suggestions (desktop only) */}
+        {/* Left panel */}
         <div className="hidden lg:flex flex-col w-80 flex-shrink-0 text-white relative overflow-hidden" style={{ background: "linear-gradient(160deg, #0f3318 0%, #1a5227 50%, #2d7a3a 100%)" }}>
-          {/* Decorative circles */}
           <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-10" style={{ background: "radial-gradient(circle, white, transparent)" }} />
           <div className="absolute -bottom-16 -right-16 w-56 h-56 rounded-full opacity-10" style={{ background: "radial-gradient(circle, white, transparent)" }} />
-
           <div className="relative flex-1 flex flex-col p-8 pt-12">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold mb-4" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}>
-              E
-            </div>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold mb-4" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}>E</div>
             <h1 className="text-2xl font-bold mb-1">Hey, I&apos;m Ella</h1>
             <p className="text-green-200 text-sm mb-8 leading-relaxed">Your personal plant expert from Healthy Earth. Ask me anything — I&apos;ve been gardening for 20 years and I love a good plant problem.</p>
-
             <p className="text-xs font-semibold text-green-300 uppercase tracking-widest mb-3">Try asking me…</p>
             <div className="space-y-2">
               {SUGGESTIONS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => sendMessage(s)}
+                <button key={s} onClick={() => sendMessage(s)}
                   className="w-full text-left text-sm px-4 py-2.5 rounded-xl transition-all hover:bg-white/20 text-white/80 hover:text-white"
-                  style={{ background: "rgba(255,255,255,0.08)" }}
-                >
+                  style={{ background: "rgba(255,255,255,0.08)" }}>
                   {s}
                 </button>
               ))}
             </div>
-
             <div className="mt-auto pt-8">
               <p className="text-xs text-green-300/60">Healthy Earth · BioCare Fertilisers</p>
               <p className="text-xs text-green-300/60">New South Wales, Australia</p>
@@ -362,11 +350,8 @@ export default function EllaWidget() {
 
         {/* Right panel — chat */}
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Header */}
           <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-white flex-shrink-0">
-            <div className="lg:hidden w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
-              E
-            </div>
+            <div className="lg:hidden w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>E</div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-gray-900 text-sm">Plant Problem Solver</p>
               <p className="text-xs text-gray-400">Powered by Ella · Healthy Earth</p>
@@ -375,17 +360,16 @@ export default function EllaWidget() {
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
               <span className="text-xs text-gray-400 mr-3">Online</span>
             </div>
-            <VoiceToggle />
+            {voiceToggleJsx}
             <button onClick={close} className="p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-
-          <MessagesArea />
-          <Disclaimer />
-          <InputBar />
+          {messagesJsx(false)}
+          {disclaimerJsx}
+          {inputBarJsx(false)}
         </div>
       </div>
     );
@@ -395,15 +379,11 @@ export default function EllaWidget() {
   return (
     <>
       {open && (
-        <div
-          className="fixed bottom-20 right-4 z-50 flex flex-col rounded-2xl overflow-hidden"
-          style={{ width: "360px", maxWidth: "calc(100vw - 2rem)", height: "520px", maxHeight: "calc(100vh - 120px)", background: "#fff", boxShadow: "0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
-        >
+        <div className="fixed bottom-20 right-4 z-50 flex flex-col rounded-2xl overflow-hidden"
+          style={{ width: "360px", maxWidth: "calc(100vw - 2rem)", height: "520px", maxHeight: "calc(100vh - 120px)", background: "#fff", boxShadow: "0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}>
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(4px)" }}>
-              E
-            </div>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(4px)" }}>E</div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
                 <p className="text-white font-semibold text-sm leading-tight">Ella</p>
@@ -411,17 +391,16 @@ export default function EllaWidget() {
               </div>
               <p className="text-green-200/80 text-xs">Plant Expert · Healthy Earth</p>
             </div>
-            <VoiceToggle />
+            {voiceToggleJsx}
             <button onClick={close} className="text-white/60 hover:text-white transition-colors p-1 flex-shrink-0" aria-label="Close">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-
-          <MessagesArea compact />
-          <Disclaimer />
-          <InputBar compact />
+          {messagesJsx(true)}
+          {disclaimerJsx}
+          {inputBarJsx(true)}
         </div>
       )}
 
