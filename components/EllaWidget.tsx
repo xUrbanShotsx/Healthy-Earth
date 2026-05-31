@@ -243,6 +243,12 @@ export default function EllaWidget() {
     </div>
   );
 
+  const Disclaimer = () => (
+    <div className="flex-shrink-0 px-4 py-1.5 text-center" style={{ background: "#f9f6f0", borderTop: "1px solid #ede9e1" }}>
+      <p className="text-xs text-gray-400 leading-snug">Ella&apos;s advice is general in nature. Always read the product label. Healthy Earth does not guarantee results for every situation.</p>
+    </div>
+  );
+
   const InputBar = ({ compact }: { compact?: boolean }) => (
     <div className={`flex-shrink-0 bg-white border-t border-gray-100 ${compact ? "px-3 py-2.5" : "px-4 py-4"}`}>
       {speaking && (
@@ -378,6 +384,7 @@ export default function EllaWidget() {
           </div>
 
           <MessagesArea />
+          <Disclaimer />
           <InputBar />
         </div>
       </div>
@@ -413,6 +420,7 @@ export default function EllaWidget() {
           </div>
 
           <MessagesArea compact />
+          <Disclaimer />
           <InputBar compact />
         </div>
       )}
