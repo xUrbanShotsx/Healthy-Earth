@@ -4,10 +4,15 @@ import { useState, useRef, useEffect, useCallback } from "react";
 
 type Message = { role: "user" | "assistant"; content: string };
 
-/* Pick the best Australian female voice available */
+const SUGGESTIONS = [
+  "My tomatoes have yellow leaves",
+  "How do I green up my lawn?",
+  "What's eating my plants?",
+  "My soil is rock hard — help!",
+];
+
 function getAussieVoice(): SpeechSynthesisVoice | null {
   const voices = window.speechSynthesis.getVoices();
-  // Prefer en-AU voices, then any English female
   return (
     voices.find((v) => v.lang === "en-AU" && /female|karen|catherine|lee/i.test(v.name)) ||
     voices.find((v) => v.lang === "en-AU") ||
@@ -30,6 +35,7 @@ function speakText(text: string) {
 
 export default function EllaWidget() {
   const [open, setOpen] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,38 +48,31 @@ export default function EllaWidget() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
-  // Listen for external open events (from "Ask Ella" buttons)
-  // Event may carry { detail: { prompt: string } } to auto-send a message
   useEffect(() => {
     function handleOpen(e: Event) {
+      const detail = (e as CustomEvent).detail;
+      setFullscreen(!!detail?.fullscreen);
       setOpen(true);
-      const prompt = (e as CustomEvent).detail?.prompt as string | undefined;
-      if (prompt) {
-        // Small delay so the widget renders first
-        setTimeout(() => sendMessage(prompt), 150);
-      }
+      const prompt = detail?.prompt as string | undefined;
+      if (prompt) setTimeout(() => sendMessage(prompt), 150);
     }
     window.addEventListener("ella:open", handleOpen);
     return () => window.removeEventListener("ella:open", handleOpen);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Scroll to bottom whenever messages change
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // Focus input when opened
   useEffect(() => {
     if (open) setTimeout(() => inputRef.current?.focus(), 100);
   }, [open]);
 
-  // Stop speech when widget closes
   useEffect(() => {
     if (!open) window.speechSynthesis?.cancel();
   }, [open]);
 
-  // Track speaking state
   useEffect(() => {
     if (!speaking) return;
     const interval = setInterval(() => {
@@ -81,6 +80,16 @@ export default function EllaWidget() {
     }, 300);
     return () => clearInterval(interval);
   }, [speaking]);
+
+  // Lock body scroll in fullscreen
+  useEffect(() => {
+    if (fullscreen && open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [fullscreen, open]);
 
   const stopSpeaking = () => {
     window.speechSynthesis?.cancel();
@@ -92,7 +101,6 @@ export default function EllaWidget() {
     if (!text || loading) return;
 
     stopSpeaking();
-
     const newMessages: Message[] = [...messages, { role: "user", content: text }];
     setMessages(newMessages);
     setInput("");
@@ -104,275 +112,321 @@ export default function EllaWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: newMessages }),
       });
-
-      if (!res.ok || !res.body) throw new Error("Failed to connect");
+      if (!res.ok || !res.body) throw new Error("Failed");
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let assistantText = "";
-
       setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n");
-
+        const lines = decoder.decode(value, { stream: true }).split("\n");
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
           const data = line.slice(6).trim();
           if (data === "[DONE]") break;
           try {
-            const json = JSON.parse(data);
-            const delta = json.choices?.[0]?.delta?.content ?? "";
+            const delta = JSON.parse(data).choices?.[0]?.delta?.content ?? "";
             assistantText += delta;
             setMessages((prev) => {
               const updated = [...prev];
               updated[updated.length - 1] = { role: "assistant", content: assistantText };
               return updated;
             });
-          } catch {
-            // skip malformed chunks
-          }
+          } catch { /* skip */ }
         }
       }
 
-      // Speak Ella's reply when done streaming
       if (voiceEnabled && assistantText) {
-        // Voices may not be loaded yet — wait briefly
-        setTimeout(() => {
-          speakText(assistantText);
-          setSpeaking(true);
-        }, 100);
+        setTimeout(() => { speakText(assistantText); setSpeaking(true); }, 100);
       }
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Sorry, something went wrong. Give it another go in a sec!" },
-      ]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, something went wrong. Give it another go in a sec!" }]);
     } finally {
       setLoading(false);
     }
   }, [input, loading, messages, voiceEnabled]);
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   }
 
   function startListening() {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Your browser doesn't support voice input. Try Chrome.");
-      return;
-    }
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) { alert("Voice input needs Chrome or Safari."); return; }
     stopSpeaking();
-    const rec = new SpeechRecognition();
+    const rec = new SR();
     rec.lang = "en-AU";
     rec.interimResults = false;
-    rec.maxAlternatives = 1;
-
     rec.onstart = () => setListening(true);
     rec.onend = () => setListening(false);
     rec.onerror = () => setListening(false);
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rec.onresult = (e: any) => {
       const transcript = e.results[0][0].transcript;
       setInput(transcript);
-      // Auto-send after a short delay so user sees what was heard
       setTimeout(() => sendMessage(transcript), 300);
     };
-
     recognitionRef.current = rec;
     rec.start();
   }
 
-  function stopListening() {
-    recognitionRef.current?.stop();
-    setListening(false);
-  }
+  function stopListening() { recognitionRef.current?.stop(); setListening(false); }
 
-  return (
-    <>
-      {/* Chat panel */}
-      {open && (
-        <div
-          className="fixed bottom-20 right-4 z-50 flex flex-col rounded-2xl shadow-2xl overflow-hidden"
-          style={{ width: "360px", maxWidth: "calc(100vw - 2rem)", height: "540px", maxHeight: "calc(100vh - 120px)", background: "#fff", border: "1px solid #e5e7eb" }}
+  function close() { setOpen(false); stopSpeaking(); }
+
+  /* ── Shared sub-components ─────────────────────────────── */
+
+  const MessagesArea = ({ compact }: { compact?: boolean }) => (
+    <div className={`flex-1 overflow-y-auto ${compact ? "px-4 py-3 space-y-2.5" : "px-6 py-6 space-y-4"}`} style={{ background: compact ? "#f9f6f0" : "#fafaf8" }}>
+      {messages.length === 0 && (
+        <div className={`text-center ${compact ? "py-4" : "py-10"}`}>
+          <div className={`rounded-full mx-auto flex items-center justify-center text-white font-bold ${compact ? "w-12 h-12 text-lg mb-2" : "w-20 h-20 text-3xl mb-4"}`} style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
+            E
+          </div>
+          <p className={`font-semibold text-gray-800 ${compact ? "text-sm mb-1" : "text-lg mb-2"}`}>G&apos;day! I&apos;m Ella 👋</p>
+          <p className={`text-gray-500 leading-relaxed ${compact ? "text-xs" : "text-sm max-w-xs mx-auto"}`}>
+            Tell me what&apos;s going on with your plants and I&apos;ll sort you out!
+          </p>
+          {!compact && (
+            <div className="mt-6 flex flex-wrap gap-2 justify-center">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => sendMessage(s)}
+                  className="text-xs px-3 py-1.5 rounded-full border transition-all hover:bg-green-50 hover:border-green-400 hover:text-green-700 text-gray-600 border-gray-200"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {messages.map((msg, i) => (
+        <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} items-end gap-2`}>
+          {msg.role === "assistant" && (
+            <div className={`rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 ${compact ? "w-6 h-6 text-xs" : "w-8 h-8 text-sm"}`} style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
+              E
+            </div>
+          )}
+          <div
+            className={`rounded-2xl leading-relaxed whitespace-pre-wrap ${compact ? "max-w-[78%] px-3 py-2 text-sm" : "max-w-[70%] px-4 py-3 text-sm"}`}
+            style={msg.role === "user"
+              ? { background: "linear-gradient(135deg, #1a5227, #2d7a3a)", color: "white", borderBottomRightRadius: "4px" }
+              : { background: "white", color: "#1f2937", borderBottomLeftRadius: "4px", boxShadow: "0 1px 3px rgba(0,0,0,0.08)", border: "1px solid #f0ede8" }}
+          >
+            {msg.content || (loading && i === messages.length - 1
+              ? <span className="flex gap-1 items-center py-0.5">
+                  {[0, 150, 300].map((d) => <span key={d} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+                </span>
+              : "")}
+          </div>
+        </div>
+      ))}
+
+      {loading && messages[messages.length - 1]?.role === "user" && (
+        <div className="flex justify-start items-end gap-2">
+          <div className={`rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 ${compact ? "w-6 h-6 text-xs" : "w-8 h-8 text-sm"}`} style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>E</div>
+          <div className="px-3 py-2.5 rounded-2xl bg-white border border-gray-100 shadow-sm" style={{ borderBottomLeftRadius: "4px" }}>
+            <span className="flex gap-1 items-center py-0.5">
+              {[0, 150, 300].map((d) => <span key={d} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+            </span>
+          </div>
+        </div>
+      )}
+      <div ref={bottomRef} />
+    </div>
+  );
+
+  const InputBar = ({ compact }: { compact?: boolean }) => (
+    <div className={`flex-shrink-0 bg-white border-t border-gray-100 ${compact ? "px-3 py-2.5" : "px-4 py-4"}`}>
+      {speaking && (
+        <div className="flex items-center gap-2 mb-2 px-1">
+          <span className="flex gap-0.5 items-end h-3">
+            {[8, 12, 10, 6].map((h, i) => (
+              <span key={i} className="w-0.5 rounded-full bg-green-500 animate-bounce" style={{ height: `${h}px`, animationDelay: `${i * 100}ms` }} />
+            ))}
+          </span>
+          <span className="text-xs text-green-700 font-medium flex-1">Ella is speaking…</span>
+          <button onClick={stopSpeaking} className="text-xs text-green-600 hover:text-green-800 font-medium">Stop</button>
+        </div>
+      )}
+      <div className="flex gap-2 items-center">
+        <button
+          onClick={listening ? stopListening : startListening}
+          disabled={loading}
+          aria-label={listening ? "Stop listening" : "Speak to Ella"}
+          className={`flex-shrink-0 rounded-full flex items-center justify-center transition-all disabled:opacity-40 ${compact ? "w-8 h-8" : "w-10 h-10"}`}
+          style={listening ? { background: "#dc2626", color: "white" } : { background: "#f3f4f6", color: "#6b7280" }}
         >
+          {listening
+            ? <span className={`rounded-sm bg-white ${compact ? "w-2.5 h-2.5" : "w-3 h-3"}`} />
+            : <svg className={compact ? "w-3.5 h-3.5" : "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+              </svg>}
+        </button>
+
+        <input
+          ref={inputRef}
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={listening ? "Listening…" : "Ask Ella anything about plants…"}
+          disabled={loading || listening}
+          className={`flex-1 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all disabled:opacity-50 ${compact ? "text-sm px-3 py-2" : "text-sm px-4 py-2.5"}`}
+        />
+
+        <button
+          onClick={() => sendMessage()}
+          disabled={loading || !input.trim()}
+          aria-label="Send"
+          className={`flex-shrink-0 rounded-full flex items-center justify-center text-white transition-all hover:opacity-90 disabled:opacity-40 ${compact ? "w-8 h-8" : "w-10 h-10"}`}
+          style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}
+        >
+          <svg className={compact ? "w-3.5 h-3.5" : "w-4 h-4"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+
+  const VoiceToggle = () => (
+    <button
+      onClick={() => { setVoiceEnabled((v) => !v); if (speaking) stopSpeaking(); }}
+      aria-label={voiceEnabled ? "Mute Ella's voice" : "Unmute Ella's voice"}
+      className="text-white/70 hover:text-white transition-colors p-1 flex-shrink-0"
+    >
+      {voiceEnabled
+        ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728" />
+          </svg>
+        : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m2-2l-2 2m0 0l-2 2" />
+          </svg>}
+    </button>
+  );
+
+  /* ── Fullscreen mode ───────────────────────────────────── */
+  if (open && fullscreen) {
+    return (
+      <div className="fixed inset-0 z-50 flex" style={{ background: "#fafaf8" }}>
+
+        {/* Left panel — branding + suggestions (desktop only) */}
+        <div className="hidden lg:flex flex-col w-80 flex-shrink-0 text-white relative overflow-hidden" style={{ background: "linear-gradient(160deg, #0f3318 0%, #1a5227 50%, #2d7a3a 100%)" }}>
+          {/* Decorative circles */}
+          <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-10" style={{ background: "radial-gradient(circle, white, transparent)" }} />
+          <div className="absolute -bottom-16 -right-16 w-56 h-56 rounded-full opacity-10" style={{ background: "radial-gradient(circle, white, transparent)" }} />
+
+          <div className="relative flex-1 flex flex-col p-8 pt-12">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold mb-4" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}>
+              E
+            </div>
+            <h1 className="text-2xl font-bold mb-1">Hey, I&apos;m Ella</h1>
+            <p className="text-green-200 text-sm mb-8 leading-relaxed">Your personal plant expert from Healthy Earth. Ask me anything — I&apos;ve been gardening for 20 years and I love a good plant problem.</p>
+
+            <p className="text-xs font-semibold text-green-300 uppercase tracking-widest mb-3">Try asking me…</p>
+            <div className="space-y-2">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => sendMessage(s)}
+                  className="w-full text-left text-sm px-4 py-2.5 rounded-xl transition-all hover:bg-white/20 text-white/80 hover:text-white"
+                  style={{ background: "rgba(255,255,255,0.08)" }}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-auto pt-8">
+              <p className="text-xs text-green-300/60">Healthy Earth · BioCare Fertilisers</p>
+              <p className="text-xs text-green-300/60">New South Wales, Australia</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right panel — chat */}
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <div className="flex items-center gap-3 px-4 py-3 flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: "rgba(255,255,255,0.2)" }}>
+          <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-white flex-shrink-0">
+            <div className="lg:hidden w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
               E
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white font-semibold text-sm leading-tight">Ella</p>
-              <p className="text-green-200 text-xs">Healthy Earth Plant Expert</p>
+              <p className="font-semibold text-gray-900 text-sm">Plant Problem Solver</p>
+              <p className="text-xs text-gray-400">Powered by Ella · Healthy Earth</p>
             </div>
-
-            {/* Voice on/off toggle */}
-            <button
-              onClick={() => { setVoiceEnabled((v) => !v); if (speaking) stopSpeaking(); }}
-              aria-label={voiceEnabled ? "Mute Ella's voice" : "Unmute Ella's voice"}
-              className="text-white/70 hover:text-white transition-colors p-1 flex-shrink-0"
-              title={voiceEnabled ? "Mute voice" : "Unmute voice"}
-            >
-              {voiceEnabled ? (
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728" />
-                </svg>
-              ) : (
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m2-2l-2 2m0 0l-2 2" />
-                </svg>
-              )}
-            </button>
-
-            <button onClick={() => setOpen(false)} className="text-white/60 hover:text-white transition-colors p-1 flex-shrink-0" aria-label="Close chat">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-xs text-gray-400 mr-3">Online</span>
+            </div>
+            <VoiceToggle />
+            <button onClick={close} className="p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3" style={{ background: "#f9f6f0" }}>
-            {messages.length === 0 && (
-              <div className="text-center py-6">
-                <div className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center text-white text-xl font-bold" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
-                  E
-                </div>
-                <p className="text-sm font-semibold text-gray-800 mb-1">G&apos;day! I&apos;m Ella 👋</p>
-                <p className="text-xs text-gray-500 leading-relaxed">Type or tap the mic and tell me about your plant problem — I&apos;ll sort you out!</p>
-              </div>
-            )}
+          <MessagesArea />
+          <InputBar />
+        </div>
+      </div>
+    );
+  }
 
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                {msg.role === "assistant" && (
-                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2 flex-shrink-0 mt-0.5" style={{ background: "#2d7a3a" }}>
-                    E
-                  </div>
-                )}
-                <div
-                  className="max-w-[78%] px-3 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap"
-                  style={msg.role === "user"
-                    ? { background: "#2d7a3a", color: "white", borderBottomRightRadius: "4px" }
-                    : { background: "white", color: "#1f2937", borderBottomLeftRadius: "4px", border: "1px solid #e5e7eb" }}
-                >
-                  {msg.content || (loading && i === messages.length - 1 ? (
-                    <span className="flex gap-1 items-center py-0.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "300ms" }} />
-                    </span>
-                  ) : "")}
-                </div>
-              </div>
-            ))}
-
-            {/* Typing indicator */}
-            {loading && messages[messages.length - 1]?.role === "user" && (
-              <div className="flex justify-start">
-                <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2 flex-shrink-0 mt-0.5" style={{ background: "#2d7a3a" }}>E</div>
-                <div className="px-3 py-2.5 rounded-2xl bg-white border border-gray-200" style={{ borderBottomLeftRadius: "4px" }}>
-                  <span className="flex gap-1 items-center py-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "300ms" }} />
-                  </span>
-                </div>
-              </div>
-            )}
-
-            <div ref={bottomRef} />
-          </div>
-
-          {/* Speaking indicator */}
-          {speaking && (
-            <div className="px-4 py-1.5 flex items-center gap-2 flex-shrink-0" style={{ background: "#f0faf2", borderTop: "1px solid #d1fae5" }}>
-              <span className="flex gap-0.5 items-end h-3">
-                {[0, 1, 2, 3].map((i) => (
-                  <span key={i} className="w-0.5 rounded-full bg-green-500 animate-bounce" style={{ height: `${[8, 12, 10, 6][i]}px`, animationDelay: `${i * 100}ms` }} />
-                ))}
-              </span>
-              <span className="text-xs text-green-700 font-medium flex-1">Ella is speaking…</span>
-              <button onClick={stopSpeaking} className="text-xs text-green-600 hover:text-green-800 font-medium">Stop</button>
+  /* ── Widget mode ───────────────────────────────────────── */
+  return (
+    <>
+      {open && (
+        <div
+          className="fixed bottom-20 right-4 z-50 flex flex-col rounded-2xl overflow-hidden"
+          style={{ width: "360px", maxWidth: "calc(100vw - 2rem)", height: "520px", maxHeight: "calc(100vh - 120px)", background: "#fff", boxShadow: "0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
+        >
+          {/* Header */}
+          <div className="flex items-center gap-3 px-4 py-3 flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(4px)" }}>
+              E
             </div>
-          )}
-
-          {/* Input */}
-          <div className="px-3 py-3 flex gap-2 flex-shrink-0 border-t border-gray-100 bg-white">
-            {/* Mic button */}
-            <button
-              onClick={listening ? stopListening : startListening}
-              disabled={loading}
-              aria-label={listening ? "Stop listening" : "Speak to Ella"}
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-all flex-shrink-0 disabled:opacity-40"
-              style={listening
-                ? { background: "#dc2626", color: "white" }
-                : { background: "#f3f4f6", color: "#6b7280" }}
-            >
-              {listening ? (
-                /* Stop / recording icon */
-                <span className="w-3 h-3 rounded-sm bg-white" />
-              ) : (
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                </svg>
-              )}
-            </button>
-
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={listening ? "Listening…" : "Ask Ella anything about plants…"}
-              disabled={loading || listening}
-              className="flex-1 text-sm px-3 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all disabled:opacity-50"
-            />
-
-            <button
-              onClick={() => sendMessage()}
-              disabled={loading || !input.trim()}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-white transition-all hover:opacity-90 disabled:opacity-40 flex-shrink-0"
-              style={{ background: "#2d7a3a" }}
-              aria-label="Send"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <p className="text-white font-semibold text-sm leading-tight">Ella</p>
+                <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
+              </div>
+              <p className="text-green-200/80 text-xs">Plant Expert · Healthy Earth</p>
+            </div>
+            <VoiceToggle />
+            <button onClick={close} className="text-white/60 hover:text-white transition-colors p-1 flex-shrink-0" aria-label="Close">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
+
+          <MessagesArea compact />
+          <InputBar compact />
         </div>
       )}
 
-      {/* Launcher button */}
+      {/* Launcher */}
       <button
-        onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-all hover:scale-105 hover:shadow-xl"
-        style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}
-        aria-label={open ? "Close Ella chat" : "Open Ella chat"}
+        onClick={() => { setFullscreen(false); setOpen((o) => !o); }}
+        className="fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:scale-105"
+        style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)", boxShadow: "0 4px 20px rgba(45,122,58,0.5)" }}
+        aria-label={open ? "Close Ella chat" : "Chat with Ella"}
       >
-        {open ? (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        ) : (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-          </svg>
-        )}
+        {open
+          ? <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          : <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>}
       </button>
     </>
   );

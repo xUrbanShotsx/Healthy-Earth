@@ -14,6 +14,10 @@ function openElla() {
   window.dispatchEvent(new CustomEvent("ella:open"));
 }
 
+function openEllaFullscreen() {
+  window.dispatchEvent(new CustomEvent("ella:open", { detail: { fullscreen: true } }));
+}
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -79,7 +83,7 @@ export default function Header() {
               )}
             </div>
 
-            <button onClick={openElla} className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Plant Problem Solver</button>
+            <button onClick={openEllaFullscreen} className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Plant Problem Solver</button>
             <Link href="/blog" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Blog</Link>
             <Link href="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">About</Link>
           </nav>
@@ -114,7 +118,7 @@ export default function Header() {
                 <Link key={item.href} href={item.href} className="block py-1.5 text-sm text-gray-700" onClick={() => setMenuOpen(false)}>{"icon" in item ? `${item.icon} ` : ""}{item.label}</Link>
               ))}
             </div>
-            <button onClick={() => { openElla(); setMenuOpen(false); }} className="block w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700">Plant Problem Solver</button>
+            <button onClick={() => { openEllaFullscreen(); setMenuOpen(false); }} className="block w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700">Plant Problem Solver</button>
             <Link href="/blog" className="block px-4 py-2.5 text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>Blog</Link>
             <Link href="/about" className="block px-4 py-2.5 text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>About</Link>
             <div className="px-4 pt-3 flex flex-col gap-2">
