@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
 import OpenEllaButton from "@/components/OpenEllaButton";
@@ -12,255 +13,183 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "About Healthy Earth | Australian Plant Nutrition by BioCare Fertilisers",
-  description: "Healthy Earth means Heal Your Earth. Discover the story behind our fertiliser philosophy and why we believe soil health is the foundation of human health.",
+  title: "About Healthy Earth | BioCare Fertilisers",
+  description: "Healthy Earth means Heal Your Earth. Built on 30 years of Australian soil science.",
 };
 
-const approach = [
+const pillars = [
   {
-    num: "01",
-    title: "Broad-spectrum nutrition",
-    body: "Where most fertilisers supply one to four elements, our formulations are designed around the full spectrum that soils, crops and the food chain require. SilicaMax, Trace Elements Volcanic, CalMag 51 — each targets a specific gap in the nutritional cycle.",
+    img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&q=80",
+    label: "Soil First",
+    title: "Feed the soil, not just the plant",
+    body: "Our formulations restore the full mineral spectrum that modern farming strips away — not just N, P and K.",
   },
   {
-    num: "02",
-    title: "Soil biology, not just chemistry",
-    body: "Soil is not inert. It is a living system. Products like Humic Carbon Liquid are formulated to feed the microbial community that makes nutrients available to plants. Healthy biology means less fertiliser is locked away and more reaches the plant.",
+    img: "https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80",
+    label: "Australian-Made",
+    title: "Built for Australian conditions",
+    body: "30 years working across broadacre, horticulture and turf in Australia. Every product starts from Australian soil chemistry.",
   },
   {
-    num: "03",
-    title: "Formulated for Australian conditions",
-    body: "Our parent company BioCare Fertilisers has worked across Australian broadacre, horticulture and turf for over three decades. Every Healthy Earth product starts from Australian soil chemistry — its pH profiles, mineral imbalances and climate.",
-  },
-  {
-    num: "04",
-    title: "Accessible to every grower",
-    body: "That agronomic depth used to require hiring an expert. Ella changes that. Describe your problem and get a science-grounded recommendation in seconds, for free. The same expertise, available to anyone.",
+    img: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
+    label: "Food Quality",
+    title: "Nutrition flows up the food chain",
+    body: "Mineral-rich soil grows mineral-rich food. That's the chain we're trying to restore — from the ground up.",
   },
 ];
 
 const stats = [
-  { value: "30+", label: "Years of research", sub: "BioCare Fertilisers, NSW" },
-  { value: "25", label: "Formulations", sub: "Built for Australian conditions" },
-  { value: "0", label: "Synthetic additives", sub: "Across the entire range" },
-  { value: "100%", label: "Australian-made", sub: "Owned, tested, produced here" },
+  { value: "30+", label: "Years of research" },
+  { value: "25", label: "Formulations" },
+  { value: "0", label: "Synthetic additives" },
+  { value: "100%", label: "Australian-made" },
 ];
 
 export default function AboutPage() {
   return (
     <>
-      {/* ── Grain overlay (fixed, non-scrolling) ── */}
-      <div
-        aria-hidden
-        className="fixed inset-0 pointer-events-none z-[1]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E")`,
-          opacity: 0.025,
-        }}
-      />
-
-      {/* ── HERO ── */}
-      <section
-        className="relative overflow-hidden flex flex-col justify-end"
-        style={{ background: "#0b1a0d", minHeight: "88vh", paddingBottom: "5rem" }}
-      >
-        {/* Radial glow */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse 80% 60% at 20% 80%, rgba(45,122,58,0.22) 0%, transparent 65%)" }}
+      {/* ── HERO — full image ── */}
+      <section className="relative overflow-hidden" style={{ minHeight: "90vh" }}>
+        <Image
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=85"
+          alt="Australian farmland at golden hour"
+          fill
+          className="object-cover object-center"
+          priority
         />
-        {/* Horizontal rule accent */}
-        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)" }} />
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, rgba(10,28,12,0.72) 0%, rgba(10,28,12,0.35) 60%, rgba(10,28,12,0.60) 100%)" }} />
 
-        <div className="relative max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 w-full">
-          {/* Eyebrow */}
+        {/* Content */}
+        <div className="relative flex flex-col justify-end h-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-20 md:pb-28" style={{ minHeight: "90vh" }}>
           <FadeIn delay={0}>
-            <div className="inline-flex items-center gap-2 mb-10">
-              <span
-                className="text-[10px] font-semibold uppercase tracking-[0.22em]"
-                style={{ color: "#6fcf7c", letterSpacing: "0.22em" }}
-              >
-                Our Story
-              </span>
-              <span className="w-8 h-px" style={{ background: "#6fcf7c", opacity: 0.4 }} />
-            </div>
+            <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.22em] mb-6" style={{ color: "#a5d6a7" }}>
+              Our Story
+            </span>
           </FadeIn>
-
-          {/* Headline */}
           <FadeIn delay={80} y={40}>
             <h1
               className={`${cormorant.className} text-white leading-[0.95]`}
-              style={{ fontSize: "clamp(4rem, 10vw, 9rem)", fontWeight: 600, letterSpacing: "-0.02em" }}
+              style={{ fontSize: "clamp(3.5rem, 9vw, 8rem)", fontWeight: 600, letterSpacing: "-0.02em" }}
             >
-              Heal Your
-              <br />
+              Heal Your<br />
               <em style={{ color: "#a5d6a7", fontStyle: "italic" }}>Earth.</em>
             </h1>
           </FadeIn>
-
-          {/* Sub */}
-          <FadeIn delay={180}>
-            <p
-              className="mt-8 max-w-lg leading-relaxed"
-              style={{ color: "rgba(255,255,255,0.45)", fontSize: "1.05rem" }}
-            >
+          <FadeIn delay={160}>
+            <p className="mt-6 max-w-md leading-relaxed text-sm md:text-base" style={{ color: "rgba(255,255,255,0.65)" }}>
               Fertilisers have the power to do great good or great harm. We built Healthy Earth around that responsibility.
             </p>
           </FadeIn>
-
-          {/* Scroll cue */}
-          <FadeIn delay={300}>
-            <div className="mt-14 flex items-center gap-3" style={{ color: "rgba(255,255,255,0.25)" }}>
-              <div className="w-px h-10" style={{ background: "rgba(255,255,255,0.15)" }} />
-              <span className="text-xs tracking-widest uppercase">Scroll</span>
-            </div>
-          </FadeIn>
         </div>
       </section>
 
-      {/* ── THE PROBLEM ── */}
-      <section className="py-32 md:py-40" style={{ background: "#FDFBF7" }}>
+      {/* ── STORY — image + text ── */}
+      <section className="py-24 md:py-32" style={{ background: "#FDFBF7" }}>
         <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-          {/* Eyebrow */}
-          <FadeIn>
-            <span
-              className="inline-block text-[10px] font-semibold uppercase tracking-[0.22em] mb-10"
-              style={{ color: "#2d7a3a" }}
-            >
-              The Problem We Set Out to Solve
-            </span>
-          </FadeIn>
-
-          {/* Editorial split */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
-            {/* Left — big serif statement */}
-            <FadeIn delay={60} className="lg:col-span-5">
-              <h2
-                className={`${cormorant.className} text-gray-900 leading-[1.05]`}
-                style={{ fontSize: "clamp(2.2rem, 4vw, 3.4rem)", fontWeight: 600, letterSpacing: "-0.01em" }}
-              >
-                Fertilisers are the most powerful input in agriculture. Most are being used the wrong way.
-              </h2>
-              {/* Decorative rule */}
-              <div className="mt-8 w-12 h-0.5" style={{ background: "#2d7a3a" }} />
+            {/* Image */}
+            <FadeIn delay={0}>
+              {/* Outer bezel */}
+              <div className="p-1.5 rounded-[2rem]" style={{ background: "rgba(0,0,0,0.05)", border: "1px solid rgba(0,0,0,0.07)" }}>
+                {/* Inner */}
+                <div className="relative rounded-[calc(2rem-6px)] overflow-hidden" style={{ aspectRatio: "4/3" }}>
+                  <Image
+                    src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=900&q=85"
+                    alt="Healthy soil and plants"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
             </FadeIn>
 
-            {/* Right — body copy */}
-            <div className="lg:col-span-7 space-y-6">
-              {[
-                "Fertilisers are the one agricultural input that is broadcast across entire landscapes. Their composition determines the nutritional quality of our soils, our crops, our pastures — and ultimately the food we eat. That is not a small thing.",
-                "Modern, high-yield agriculture accelerates soil nutrient depletion. Intensive cropping can begin to significantly reduce soil mineral reserves within a few seasons. The land gives, and conventional farming takes — without restoring the full spectrum of what was removed.",
-                "While many plants will survive on a relatively small suite of elements, animals and humans require a much broader range of minerals to maintain health. Most conventional fertilisers supply only one to four elements. That narrow focus helps crops grow — but it does not restore the full nutritional balance the soil and the food chain need.",
-                "The outcome is food that fills bellies but often lacks the nutrients required to support long-term health, vitality and disease resistance. We started Healthy Earth because we believed there was a better way.",
-              ].map((para, i) => (
-                <FadeIn key={i} delay={i * 80}>
-                  <p className="leading-relaxed" style={{ color: "#4a5568", fontSize: "1.02rem" }}>{para}</p>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── PULL QUOTE ── */}
-      <section className="py-28 md:py-36 relative overflow-hidden" style={{ background: "#0d1f10" }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 70% at 80% 50%, rgba(45,122,58,0.15) 0%, transparent 60%)" }} />
-        <div className="relative max-w-5xl mx-auto px-6 sm:px-10 lg:px-16">
-          <FadeIn y={20}>
-            <div className="flex gap-6 items-start">
-              <span className={`${cormorant.className} flex-shrink-0 leading-none`} style={{ fontSize: "6rem", color: "#2d7a3a", opacity: 0.5, lineHeight: 0.7 }}>&ldquo;</span>
-              <blockquote>
-                <p
-                  className={`${cormorant.className} text-white leading-[1.12]`}
-                  style={{ fontSize: "clamp(1.7rem, 3.5vw, 2.8rem)", fontWeight: 500, fontStyle: "italic" }}
-                >
-                  Healthy soil doesn&apos;t just grow bigger crops. It grows food that actually nourishes the people who eat it.
-                </p>
-                <cite className="block mt-6 text-xs font-semibold uppercase tracking-[0.18em] not-italic" style={{ color: "#6fcf7c" }}>
-                  Healthy Earth · BioCare Fertilisers, New South Wales
-                </cite>
-              </blockquote>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ── HOW WE WORK ── */}
-      <section className="py-32 md:py-40" style={{ background: "#FDFBF7" }}>
-        <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
-          <FadeIn>
-            <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.22em] mb-10" style={{ color: "#2d7a3a" }}>
-              How We Work
-            </span>
-          </FadeIn>
-          <FadeIn delay={60}>
-            <h2
-              className={`${cormorant.className} text-gray-900 leading-tight mb-20`}
-              style={{ fontSize: "clamp(2.2rem, 4vw, 3.4rem)", fontWeight: 600, letterSpacing: "-0.01em" }}
-            >
-              Built on 30 years of<br />Australian soil science.
-            </h2>
-          </FadeIn>
-
-          <div className="space-y-0 divide-y" style={{ borderColor: "rgba(0,0,0,0.07)" }}>
-            {approach.map((item, i) => (
-              <FadeIn key={item.num} delay={i * 60}>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 py-10 group">
-                  <div className="md:col-span-1">
-                    <span className="font-mono text-xs font-bold" style={{ color: "#2d7a3a", letterSpacing: "0.08em" }}>{item.num}</span>
-                  </div>
-                  <div className="md:col-span-4">
-                    <h3
-                      className={`${cormorant.className} text-gray-900 leading-tight`}
-                      style={{ fontSize: "1.55rem", fontWeight: 600 }}
-                    >
-                      {item.title}
-                    </h3>
-                  </div>
-                  <div className="md:col-span-7">
-                    <p className="leading-relaxed" style={{ color: "#5a6872", fontSize: "0.97rem" }}>{item.body}</p>
-                  </div>
-                </div>
+            {/* Text */}
+            <div>
+              <FadeIn delay={100}>
+                <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.22em] mb-6" style={{ color: "#2d7a3a" }}>
+                  The Problem We Solve
+                </span>
               </FadeIn>
-            ))}
+              <FadeIn delay={160}>
+                <h2
+                  className={`${cormorant.className} text-gray-900 leading-tight mb-6`}
+                  style={{ fontSize: "clamp(1.9rem, 3.5vw, 3rem)", fontWeight: 600, letterSpacing: "-0.01em" }}
+                >
+                  Most conventional fertilisers supply only 1–4 elements. The food chain needs far more.
+                </h2>
+              </FadeIn>
+              <FadeIn delay={220}>
+                <p className="leading-relaxed mb-5" style={{ color: "#5a6872", fontSize: "1rem" }}>
+                  Modern high-yield agriculture depletes soil mineral reserves within a few seasons. While crops survive on a narrow suite of nutrients, animals and humans require a much broader range to maintain health.
+                </p>
+              </FadeIn>
+              <FadeIn delay={280}>
+                <p className="leading-relaxed" style={{ color: "#5a6872", fontSize: "1rem" }}>
+                  The result? Food that fills bellies but lacks the nutrition to support long-term health and vitality. We started Healthy Earth to fix that — from the ground up.
+                </p>
+              </FadeIn>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── STATS — Double-Bezel Bento ── */}
+      {/* ── THREE PILLARS — image cards ── */}
       <section className="py-24 md:py-32" style={{ background: "#f0ede6" }}>
         <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
           <FadeIn>
-            <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.22em] mb-12" style={{ color: "#2d7a3a" }}>
-              By the numbers
-            </span>
+            <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.22em] mb-4" style={{ color: "#2d7a3a" }}>What drives us</span>
           </FadeIn>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map((s, i) => (
-              <FadeIn key={s.label} delay={i * 70}>
-                {/* Outer shell */}
+          <FadeIn delay={60}>
+            <h2
+              className={`${cormorant.className} text-gray-900 mb-14`}
+              style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.1 }}
+            >
+              Three things we never<br />compromise on.
+            </h2>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {pillars.map((p, i) => (
+              <FadeIn key={p.label} delay={i * 80}>
+                {/* Outer bezel */}
                 <div
-                  className="p-1.5 rounded-[1.6rem]"
+                  className="group h-full p-1.5 rounded-[2rem] transition-all duration-700"
                   style={{ background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.07)" }}
                 >
-                  {/* Inner core */}
+                  {/* Inner */}
                   <div
-                    className="rounded-[calc(1.6rem-6px)] p-7 flex flex-col gap-3"
-                    style={{
-                      background: "#FDFBF7",
-                      boxShadow: "inset 0 1px 1px rgba(255,255,255,0.9)",
-                    }}
+                    className="rounded-[calc(2rem-6px)] overflow-hidden h-full flex flex-col"
+                    style={{ background: "#FDFBF7", boxShadow: "inset 0 1px 1px rgba(255,255,255,0.9)" }}
                   >
-                    <div
-                      className={`${cormorant.className} font-bold text-gray-900`}
-                      style={{ fontSize: "clamp(2.2rem, 4vw, 3rem)", lineHeight: 1, letterSpacing: "-0.02em" }}
-                    >
-                      {s.value}
+                    {/* Image */}
+                    <div className="relative overflow-hidden" style={{ height: "220px" }}>
+                      <Image
+                        src={p.img}
+                        alt={p.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      {/* Label pill */}
+                      <div className="absolute top-4 left-4">
+                        <span
+                          className="text-[10px] font-semibold uppercase tracking-[0.18em] px-3 py-1 rounded-full"
+                          style={{ background: "rgba(13,31,16,0.7)", color: "#a5d6a7", backdropFilter: "blur(8px)" }}
+                        >
+                          {p.label}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-sm font-semibold text-gray-800">{s.label}</div>
-                      <div className="text-xs mt-0.5" style={{ color: "#8a9a8a" }}>{s.sub}</div>
+                    {/* Text */}
+                    <div className="p-6 flex flex-col flex-1">
+                      <h3
+                        className={`${cormorant.className} text-gray-900 mb-3`}
+                        style={{ fontSize: "1.4rem", fontWeight: 600, lineHeight: 1.2 }}
+                      >
+                        {p.title}
+                      </h3>
+                      <p className="text-sm leading-relaxed" style={{ color: "#6b7a6b" }}>{p.body}</p>
                     </div>
                   </div>
                 </div>
@@ -270,66 +199,99 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-32 md:py-40" style={{ background: "#FDFBF7" }}>
+      {/* ── STATS ── */}
+      <section className="py-20 md:py-24" style={{ background: "#0d1f10" }}>
         <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
-            <FadeIn className="lg:col-span-7">
-              <h2
-                className={`${cormorant.className} text-gray-900 leading-[1.02]`}
-                style={{ fontSize: "clamp(2.4rem, 5vw, 4rem)", fontWeight: 600, letterSpacing: "-0.02em" }}
-              >
-                Ready to build<br />
-                <em style={{ fontStyle: "italic", color: "#2d7a3a" }}>healthier soil?</em>
-              </h2>
-            </FadeIn>
-            <FadeIn delay={100} className="lg:col-span-5 flex flex-col gap-4">
-              <p className="leading-relaxed mb-2" style={{ color: "#6b7a6b", fontSize: "1rem" }}>
-                Browse our range or talk to Ella — she&apos;ll point you to exactly what your soil, lawn or crop needs.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                {/* Button-in-button pattern */}
-                <Link
-                  href="/products"
-                  className="group inline-flex items-center justify-between gap-4 pl-6 pr-2 py-2 rounded-full font-semibold text-sm text-white transition-all active:scale-[0.98]"
-                  style={{
-                    background: "linear-gradient(135deg, #1a5227, #2d7a3a)",
-                    boxShadow: "0 8px 30px rgba(45,122,58,0.28)",
-                    transition: "all 0.5s cubic-bezier(0.32,0.72,0,1)",
-                  }}
-                >
-                  Browse Products
-                  <span
-                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-px"
-                    style={{ background: "rgba(255,255,255,0.15)" }}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
+            {stats.map((s, i) => (
+              <FadeIn key={s.label} delay={i * 70}>
+                <div className="text-center">
+                  <div
+                    className={`${cormorant.className} font-bold text-white`}
+                    style={{ fontSize: "clamp(2.5rem, 5vw, 3.5rem)", lineHeight: 1, letterSpacing: "-0.02em" }}
                   >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7v10" />
-                    </svg>
-                  </span>
-                </Link>
-                <OpenEllaButton
-                  className="group inline-flex items-center justify-between gap-4 pl-6 pr-2 py-2 rounded-full font-semibold text-sm transition-all active:scale-[0.98]"
-                  style={{
-                    border: "1px solid rgba(45,122,58,0.3)",
-                    color: "#2d7a3a",
-                    background: "transparent",
-                    transition: "all 0.5s cubic-bezier(0.32,0.72,0,1)",
-                  }}
-                >
-                  Ask Ella
-                  <span
-                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-px"
-                    style={{ background: "rgba(45,122,58,0.08)" }}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                    </svg>
-                  </span>
-                </OpenEllaButton>
-              </div>
-            </FadeIn>
+                    {s.value}
+                  </div>
+                  <div className="mt-2 text-xs font-medium uppercase tracking-widest" style={{ color: "#6fcf7c" }}>
+                    {s.label}
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── WIDE IMAGE BREAK ── */}
+      <FadeIn>
+        <div className="relative overflow-hidden" style={{ height: "420px" }}>
+          <Image
+            src="https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?w=1920&q=85"
+            alt="Australian agriculture"
+            fill
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(13,31,16,0.65) 0%, rgba(13,31,16,0.15) 60%, transparent 100%)" }} />
+          <div className="relative flex items-center h-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
+            <div className="max-w-lg">
+              <p
+                className={`${cormorant.className} text-white leading-tight`}
+                style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.6rem)", fontStyle: "italic", fontWeight: 500 }}
+              >
+                &ldquo;Healthy soil grows food that actually nourishes the people who eat it.&rdquo;
+              </p>
+              <p className="mt-4 text-sm font-semibold uppercase tracking-widest" style={{ color: "#a5d6a7" }}>
+                Healthy Earth · BioCare Fertilisers, NSW
+              </p>
+            </div>
+          </div>
+        </div>
+      </FadeIn>
+
+      {/* ── CTA ── */}
+      <section className="py-28 md:py-36" style={{ background: "#FDFBF7" }}>
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 text-center">
+          <FadeIn>
+            <h2
+              className={`${cormorant.className} text-gray-900 leading-tight mb-6`}
+              style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)", fontWeight: 600, letterSpacing: "-0.02em" }}
+            >
+              Ready to build<br />
+              <em style={{ fontStyle: "italic", color: "#2d7a3a" }}>healthier soil?</em>
+            </h2>
+          </FadeIn>
+          <FadeIn delay={80}>
+            <p className="mb-10 leading-relaxed" style={{ color: "#6b7a6b", fontSize: "1rem", maxWidth: "420px", margin: "0 auto 2.5rem" }}>
+              Browse our range or talk to Ella — she&apos;ll point you to exactly what your soil needs.
+            </p>
+          </FadeIn>
+          <FadeIn delay={140}>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/products"
+                className="group inline-flex items-center justify-center gap-3 pl-7 pr-2 py-2 rounded-full font-semibold text-sm text-white transition-all duration-500 active:scale-[0.98]"
+                style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)", boxShadow: "0 8px 30px rgba(45,122,58,0.28)" }}
+              >
+                Browse Products
+                <span className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.15)" }}>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7v10" />
+                  </svg>
+                </span>
+              </Link>
+              <OpenEllaButton
+                className="group inline-flex items-center justify-center gap-3 pl-7 pr-2 py-2 rounded-full font-semibold text-sm transition-all duration-500 active:scale-[0.98]"
+                style={{ border: "1px solid rgba(45,122,58,0.3)", color: "#2d7a3a" }}
+              >
+                Ask Ella
+                <span className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "rgba(45,122,58,0.08)" }}>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                </span>
+              </OpenEllaButton>
+            </div>
+          </FadeIn>
         </div>
       </section>
     </>
