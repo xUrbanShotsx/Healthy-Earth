@@ -11,8 +11,7 @@ const productDropdown = [
 ];
 
 function openElla() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).voiceflow?.chat?.open?.();
+  window.dispatchEvent(new CustomEvent("ella:open"));
 }
 
 export default function Header() {
