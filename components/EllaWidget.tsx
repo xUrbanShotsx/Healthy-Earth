@@ -58,7 +58,8 @@ export default function EllaWidget() {
   }, [open]);
 
   useEffect(() => {
-    if (fullscreen && open) {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    if (open && (fullscreen || isMobile)) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -376,8 +377,8 @@ export default function EllaWidget() {
   return (
     <>
       {open && (
-        <div className="fixed bottom-20 right-4 z-50 flex flex-col rounded-2xl overflow-hidden"
-          style={{ width: "360px", maxWidth: "calc(100vw - 2rem)", height: "520px", maxHeight: "calc(100vh - 120px)", background: "#fff", boxShadow: "0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}>
+        <div className="fixed inset-0 z-50 flex flex-col overflow-hidden sm:inset-auto sm:bottom-20 sm:right-4 sm:w-[360px] sm:h-[520px] sm:max-h-[calc(100vh-120px)] sm:rounded-2xl"
+          style={{ background: "#fff", boxShadow: "0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}>
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>
             <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(4px)" }}>E</div>
@@ -401,10 +402,10 @@ export default function EllaWidget() {
         </div>
       )}
 
-      {/* Launcher */}
+      {/* Launcher — hidden on mobile when widget is open (full-screen widget has its own close button) */}
       <button
         onClick={() => { setFullscreen(false); setOpen((o) => !o); }}
-        className="fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:scale-105"
+        className={`fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full items-center justify-center text-white transition-all hover:scale-105 ${open ? "hidden sm:flex" : "flex"}`}
         style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)", boxShadow: "0 4px 20px rgba(45,122,58,0.5)" }}
         aria-label={open ? "Close Ella chat" : "Chat with Ella"}
       >
