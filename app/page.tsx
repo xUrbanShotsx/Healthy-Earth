@@ -25,25 +25,46 @@ export default function HomePage() {
       </section>
 
       {/* ── HERO TEXT ───────────────────────────────────────────────────────── */}
-      <section className="py-16 md:py-20" style={{ background: "#0d1f10" }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="inline-flex items-center gap-2 mb-6" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "99px", padding: "6px 16px", border: "1px solid rgba(255,255,255,0.12)" }}>
+      <section className="relative py-24 md:py-32 overflow-hidden" style={{ background: "#0d1f10" }}>
+        {/* Subtle radial glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(45,122,58,0.18) 0%, transparent 70%)" }} />
+        {/* Faint grain texture via repeating svg */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")" }} />
+
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 mb-8" style={{ background: "rgba(255,255,255,0.06)", borderRadius: "99px", padding: "6px 18px", border: "1px solid rgba(255,255,255,0.10)" }}>
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-white/80 text-xs font-medium tracking-wide">BioCare Fertilisers · New South Wales, Australia</span>
+            <span className="text-white/60 text-xs font-medium tracking-widest uppercase">BioCare Fertilisers · New South Wales, Australia</span>
           </div>
-          <h1 className="font-bold text-white leading-[1.05] mb-6" style={{ fontSize: "clamp(2.8rem, 6vw, 5rem)" }}>
+
+          {/* Headline */}
+          <h1 className="font-bold text-white leading-[1.08] mb-7" style={{ fontSize: "clamp(2.8rem, 6vw, 5.2rem)", letterSpacing: "-0.02em" }}>
             Nutrition that works<br />
-            <span style={{ color: "#a5d6a7" }}>with your soil,</span><br />
+            <span style={{ background: "linear-gradient(90deg, #6fcf7c, #a5d6a7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              with your soil,
+            </span><br />
             not against it.
           </h1>
-          <p className="text-white/70 leading-relaxed mb-10 max-w-xl" style={{ fontSize: "1.1rem" }}>
+
+          {/* Divider line */}
+          <div className="mx-auto mb-8" style={{ width: "48px", height: "2px", background: "linear-gradient(90deg, transparent, #2d7a3a, transparent)" }} />
+
+          {/* Description */}
+          <p className="leading-relaxed mb-12 mx-auto" style={{ color: "rgba(255,255,255,0.55)", fontSize: "1.15rem", maxWidth: "560px" }}>
             25 formulations built for Australian conditions — from a lawn that won&apos;t green up, to broadacre crops that need every bit of yield they can get.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link href="/products" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base transition-all hover:opacity-90 shadow-lg" style={{ background: "#2d7a3a", color: "white" }}>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/products"
+              className="inline-flex items-center justify-center gap-2 px-9 py-4 rounded-full font-semibold text-base transition-all hover:opacity-90 shadow-lg shadow-green-900/40"
+              style={{ background: "linear-gradient(135deg, #2d7a3a, #3d9b4a)", color: "white" }}
+            >
               Browse Products
             </Link>
-            <OpenEllaButton className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base border border-white/30 text-white transition-all hover:bg-white/10">
+            <OpenEllaButton className="inline-flex items-center justify-center gap-2 px-9 py-4 rounded-full font-semibold text-base transition-all hover:bg-white/10" style={{ border: "1px solid rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.85)" }}>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
               Ask Ella — Free
             </OpenEllaButton>
