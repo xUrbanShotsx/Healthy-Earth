@@ -129,14 +129,26 @@ export default function EllaWidget() {
           if (!audioRes.ok) {
             const errText = await audioRes.text();
             console.error("TTS API error:", audioRes.status, errText);
-          } else if (audioRes.ok) {
+          } else {
             const blob = await audioRes.blob();
-            const url = URL.createObjectURL(blob);
-            const audio = new Audio(url);
-            audioRef.current = audio;
-            setSpeaking(true);
-            audio.play();
-            audio.onended = () => { URL.revokeObjectURL(url); setSpeaking(false); };
+            console.log("TTS blob size:", blob.size, "type:", blob.type);
+            if (blob.size > 0) {
+              const url = URL.createObjectURL(blob);
+              const audio = new Audio(url);
+              audio.preload = "auto";
+              audioRef.current = audio;
+              audio.onended = () => { URL.revokeObjectURL(url); setSpeaking(false); };
+              audio.onerror = (e) => { console.error("Audio element error:", e); setSpeaking(false); URL.revokeObjectURL(url); };
+              setSpeaking(true);
+              try {
+                await audio.play();
+              } catch (playErr) {
+                console.error("audio.play() blocked:", playErr);
+                setSpeaking(false);
+              }
+            } else {
+              console.error("TTS returned empty blob");
+            }
           }
         } catch (err) { console.error("TTS playback error:", err); }
       }
