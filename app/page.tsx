@@ -3,6 +3,7 @@ import Link from "next/link";
 import OpenEllaButton from "@/components/OpenEllaButton";
 import { Icon } from "@/components/Icon";
 import HeroVideo from "@/components/HeroVideo";
+import StatsCounter from "@/components/StatsCounter";
 
 export const metadata: Metadata = {
   title: "Healthy Earth | Fertilisers & Plant Nutrition for Australian Gardens & Farms",
@@ -50,25 +51,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CREDIBILITY STRIP ───────────────────────────────────────────────── */}
-      <section style={{ background: "#0d1f10" }} className="py-8 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            {[
-              { val: "25", label: "formulations" },
-              { val: "51%", label: "SiO₂ in SilicaMax" },
-              { val: "30+", label: "years of research" },
-              { val: "0", label: "synthetic additives" },
-              { val: "100%", label: "Australian-made" },
-            ].map((s) => (
-              <div key={s.label} className="text-center flex-1 min-w-[120px]">
-                <div className="font-mono font-bold text-white" style={{ fontSize: "2rem" }}>{s.val}</div>
-                <div className="text-green-500 text-xs mt-0.5 uppercase tracking-wider">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── STATS COUNTER ───────────────────────────────────────────────────── */}
+      <StatsCounter />
 
       {/* ── PRODUCT SPOTLIGHT ───────────────────────────────────────────────── */}
       <section className="py-24" style={{ background: "#f5f0e8" }}>
