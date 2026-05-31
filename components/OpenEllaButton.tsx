@@ -5,12 +5,13 @@ type Props = {
   style?: React.CSSProperties;
   children: React.ReactNode;
   onClick?: () => void;
+  prompt?: string;
 };
 
-export default function OpenEllaButton({ className, style, children, onClick }: Props) {
+export default function OpenEllaButton({ className, style, children, onClick, prompt }: Props) {
   function handleClick() {
     onClick?.();
-    window.dispatchEvent(new CustomEvent("ella:open"));
+    window.dispatchEvent(new CustomEvent("ella:open", { detail: prompt ? { prompt } : undefined }));
   }
 
   return (

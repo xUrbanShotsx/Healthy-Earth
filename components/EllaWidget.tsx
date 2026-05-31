@@ -43,10 +43,19 @@ export default function EllaWidget() {
   const recognitionRef = useRef<any>(null);
 
   // Listen for external open events (from "Ask Ella" buttons)
+  // Event may carry { detail: { prompt: string } } to auto-send a message
   useEffect(() => {
-    function handleOpen() { setOpen(true); }
+    function handleOpen(e: Event) {
+      setOpen(true);
+      const prompt = (e as CustomEvent).detail?.prompt as string | undefined;
+      if (prompt) {
+        // Small delay so the widget renders first
+        setTimeout(() => sendMessage(prompt), 150);
+      }
+    }
     window.addEventListener("ella:open", handleOpen);
     return () => window.removeEventListener("ella:open", handleOpen);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Scroll to bottom whenever messages change

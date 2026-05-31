@@ -78,7 +78,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <Link href="/retailers" className="flex-1 text-center py-4 rounded-full font-semibold text-white transition-all hover:opacity-90 shadow-md" style={{ background: "#2d7a3a" }}>
                   Find Retailers
                 </Link>
-                <OpenEllaButton className="flex-1 text-center py-4 rounded-full font-semibold border-2 transition-all hover:bg-green-50" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
+                <OpenEllaButton prompt={`What is ${product.name}?`} className="flex-1 text-center py-4 rounded-full font-semibold border-2 transition-all hover:bg-green-50" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
                   Ask Ella About This Product
                 </OpenEllaButton>
               </div>
@@ -161,7 +161,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold text-white mb-3">Have a question about {product.shortName}?</h2>
           <p className="text-white/70 mb-6">Ella can tell you if this product is right for your situation, and what rate and timing to use.</p>
-          <OpenEllaButton className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-white border-2 border-white hover:bg-white hover:text-green-800 transition-all">
+          <OpenEllaButton prompt={`What is ${product.name}?`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-white border-2 border-white hover:bg-white hover:text-green-800 transition-all">
             Ask Ella About This Product
           </OpenEllaButton>
         </div>
