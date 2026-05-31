@@ -47,9 +47,6 @@ export default function HomePage() {
             not against it.
           </h1>
 
-          {/* Divider */}
-          <div className="mx-auto mb-8" style={{ width: "48px", height: "2px", background: "linear-gradient(90deg, transparent, #2d7a3a, transparent)" }} />
-
           {/* Description */}
           <p className="leading-relaxed mb-12 mx-auto" style={{ color: "#5a7060", fontSize: "1.15rem", maxWidth: "560px" }}>
             25 formulations built for Australian conditions — from a lawn that won&apos;t green up, to broadacre crops that need every bit of yield they can get.
