@@ -18,44 +18,35 @@ const testimonials = [
 export default function HomePage() {
   return (
     <>
-      {/* ── HERO ────────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden" style={{ minHeight: "92vh", display: "flex", alignItems: "center" }}>
-        <div className="absolute inset-0">
-          <HeroVideo />
-          {/* Gradient: strong dark on left for text readability, fades to near-transparent on right so Ella shows clearly */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,35,15,0.92) 0%, rgba(10,35,15,0.80) 35%, rgba(10,35,15,0.30) 65%, rgba(10,35,15,0.0) 100%)" }} />
-        </div>
+      {/* ── HERO VIDEO ──────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden" style={{ minHeight: "92vh" }}>
+        <HeroVideo />
+      </section>
 
-        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 mb-8" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "99px", padding: "6px 16px", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.12)" }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-white/80 text-xs font-medium tracking-wide">BioCare Fertilisers · New South Wales, Australia</span>
-            </div>
-            <h1 className="font-bold text-white leading-[1.05] mb-6" style={{ fontSize: "clamp(2.8rem, 6vw, 5rem)" }}>
-              Nutrition that works<br />
-              <span style={{ color: "#a5d6a7" }}>with your soil,</span><br />
-              not against it.
-            </h1>
-            <p className="text-white/70 leading-relaxed mb-10 max-w-xl" style={{ fontSize: "1.1rem" }}>
-              25 formulations built for Australian conditions — from a lawn that won&apos;t green up, to broadacre crops that need every bit of yield they can get.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/products" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base transition-all hover:opacity-90 shadow-lg" style={{ background: "#2d7a3a", color: "white" }}>
-                Browse Products
-              </Link>
-              <OpenEllaButton className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base border border-white/30 text-white transition-all hover:bg-white/10" style={{ backdropFilter: "blur(8px)" }}>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-                Ask Ella — Free
-              </OpenEllaButton>
-            </div>
+      {/* ── HERO TEXT ───────────────────────────────────────────────────────── */}
+      <section className="py-16 md:py-20" style={{ background: "#0d1f10" }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="inline-flex items-center gap-2 mb-6" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "99px", padding: "6px 16px", border: "1px solid rgba(255,255,255,0.12)" }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-white/80 text-xs font-medium tracking-wide">BioCare Fertilisers · New South Wales, Australia</span>
           </div>
-        </div>
-
-        {/* scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
-          <span className="text-white text-xs tracking-widest uppercase">Scroll</span>
-          <svg className="w-4 h-4 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          <h1 className="font-bold text-white leading-[1.05] mb-6" style={{ fontSize: "clamp(2.8rem, 6vw, 5rem)" }}>
+            Nutrition that works<br />
+            <span style={{ color: "#a5d6a7" }}>with your soil,</span><br />
+            not against it.
+          </h1>
+          <p className="text-white/70 leading-relaxed mb-10 max-w-xl" style={{ fontSize: "1.1rem" }}>
+            25 formulations built for Australian conditions — from a lawn that won&apos;t green up, to broadacre crops that need every bit of yield they can get.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link href="/products" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base transition-all hover:opacity-90 shadow-lg" style={{ background: "#2d7a3a", color: "white" }}>
+              Browse Products
+            </Link>
+            <OpenEllaButton className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base border border-white/30 text-white transition-all hover:bg-white/10">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+              Ask Ella — Free
+            </OpenEllaButton>
+          </div>
         </div>
       </section>
 
