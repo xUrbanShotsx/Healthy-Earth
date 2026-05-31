@@ -125,7 +125,10 @@ export default function EllaWidget() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text: assistantText }),
           });
-          if (audioRes.ok) {
+          if (!audioRes.ok) {
+            const errText = await audioRes.text();
+            console.error("TTS API error:", audioRes.status, errText);
+          } else if (audioRes.ok) {
             const blob = await audioRes.blob();
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
@@ -134,7 +137,7 @@ export default function EllaWidget() {
             audio.play();
             audio.onended = () => { URL.revokeObjectURL(url); setSpeaking(false); };
           }
-        } catch { /* fall back to silence if TTS fails */ }
+        } catch (err) { console.error("TTS playback error:", err); }
       }
     } catch {
       setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, something went wrong. Give it another go in a sec!" }]);

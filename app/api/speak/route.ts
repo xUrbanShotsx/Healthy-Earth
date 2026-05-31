@@ -22,10 +22,16 @@ export async function POST(req: NextRequest) {
 
   if (!xaiRes.ok) {
     const err = await xaiRes.text();
-    return new Response(err, { status: xaiRes.status });
+    console.error("xAI TTS error:", xaiRes.status, err);
+    return new Response(JSON.stringify({ status: xaiRes.status, error: err }), {
+      status: xaiRes.status,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
+  const contentType = xaiRes.headers.get("Content-Type") ?? "audio/mpeg";
+  console.log("xAI TTS success, content-type:", contentType);
   return new Response(xaiRes.body, {
-    headers: { "Content-Type": "audio/mpeg" },
+    headers: { "Content-Type": contentType },
   });
 }
