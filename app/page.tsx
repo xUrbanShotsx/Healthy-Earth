@@ -26,9 +26,6 @@ export default function HomePage() {
 
       {/* ── HERO TEXT ───────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden" style={{ background: "linear-gradient(160deg, #f4f8f2 0%, #eef5e8 50%, #f0f5eb 100%)" }}>
-        {/* Soft dark-to-light bridge from the video fade above */}
-        <div className="absolute top-0 left-0 right-0 pointer-events-none" style={{ height: "90px", background: "linear-gradient(to bottom, #0d1f10, transparent)" }} />
-
         {/* Subtle sage blob — left */}
         <div className="absolute -left-32 top-1/2 -translate-y-1/2 pointer-events-none" style={{ width: "480px", height: "480px", borderRadius: "50%", background: "radial-gradient(circle, rgba(45,122,58,0.08) 0%, transparent 70%)" }} />
         {/* Subtle sage blob — right */}

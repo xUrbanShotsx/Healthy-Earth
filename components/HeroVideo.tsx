@@ -24,12 +24,6 @@ export default function HeroVideo() {
         className="absolute inset-0 w-full h-full object-cover object-center md:object-right-top"
       />
 
-      {/* Bottom fade into next section */}
-      <div
-        className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none"
-        style={{ height: "35%", background: "linear-gradient(to bottom, transparent, #0d1f10)" }}
-      />
-
       {/* Mute / unmute toggle — top right */}
       <button
         onClick={toggleMute}
