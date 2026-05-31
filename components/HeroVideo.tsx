@@ -24,6 +24,32 @@ export default function HeroVideo() {
         className="absolute inset-0 w-full h-full object-cover object-center md:object-right-top"
       />
 
+      {/* Chat to Ella tab — bottom centre */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent("ella:open", { detail: { fullscreen: true } }))}
+          className="group flex items-center gap-3 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95"
+          style={{
+            background: "rgba(255,255,255,0.12)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            border: "1px solid rgba(255,255,255,0.25)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+          }}
+        >
+          {/* Pulsing green dot */}
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "#6fcf7c" }} />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: "#4caf50" }} />
+          </span>
+          <span className="text-white font-semibold text-sm tracking-wide">Chat to Ella</span>
+          {/* Arrow */}
+          <svg className="w-4 h-4 text-white/70 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
       {/* Mute / unmute toggle — top right */}
       <button
         onClick={toggleMute}
