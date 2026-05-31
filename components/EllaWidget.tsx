@@ -25,8 +25,28 @@ export default function EllaWidget() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUnlockedRef = useRef(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
+
+  // Unlock audio on iOS/Android — must be called inside a user-gesture handler
+  function unlockAudio() {
+    if (audioUnlockedRef.current) return;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ACtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (ACtx) {
+        const ctx = new ACtx();
+        const buf = ctx.createBuffer(1, 1, 22050);
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.connect(ctx.destination);
+        src.start(0);
+        ctx.resume();
+      }
+      audioUnlockedRef.current = true;
+    } catch { /* ignore */ }
+  }
 
   useEffect(() => {
     function handleOpen(e: Event) {
@@ -77,6 +97,7 @@ export default function EllaWidget() {
     const text = (textOverride ?? input).trim();
     if (!text || loading) return;
 
+    unlockAudio();
     audioRef.current?.pause();
     audioRef.current = null;
     setSpeaking(false);
@@ -164,6 +185,7 @@ export default function EllaWidget() {
   }, [sendMessage]);
 
   function startListening() {
+    unlockAudio();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) { alert("Voice input needs Chrome or Safari."); return; }

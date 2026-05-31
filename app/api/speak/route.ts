@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   const { text } = await req.json();
   if (!text) return new Response("No text provided", { status: 400 });
 
-  const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+  const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`, {
     method: "POST",
     headers: {
       "xi-api-key": apiKey,
