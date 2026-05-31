@@ -121,7 +121,7 @@ export default function ProductsPage() {
                       <Link href={`/our-products/${product.id}`} className="flex-1 text-center py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:opacity-90" style={{ background: "#2d7a3a" }}>
                         View Details
                       </Link>
-                      <button onClick={() => window.dispatchEvent(new CustomEvent("ella:open", { detail: { prompt: `What is ${product.name}?` } }))} className="px-3 py-2.5 rounded-full border-2 text-sm font-semibold transition-all hover:bg-green-50" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
+                      <button onClick={() => window.dispatchEvent(new CustomEvent("ella:open", { detail: { prompt: `Hey Ella tell me about ${product.name}` } }))} className="px-3 py-2.5 rounded-full border-2 text-sm font-semibold transition-all hover:bg-green-50" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
                         Ask Ella
                       </button>
                     </div>
