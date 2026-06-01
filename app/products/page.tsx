@@ -86,7 +86,7 @@ export default function ProductsPage() {
               {filtered.map((product: Product) => (
                 <div key={product.id} className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}>
                   {/* Square image frame */}
-                  <div className="relative w-full aspect-square bg-white flex-shrink-0 overflow-hidden">
+                  <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#f5f2ec" }}>
                     {product.image ? (
                       <Image src={product.image} alt={product.shortName} fill className="object-contain p-2 transition-transform duration-500 group-hover:scale-105" />
                     ) : (
