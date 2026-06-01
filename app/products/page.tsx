@@ -84,37 +84,39 @@ export default function ProductsPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((product: Product) => (
-                <div key={product.id} className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col aspect-square" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}>
-                  {/* Image — top 58% */}
-                  <div className="relative w-full flex-[3] overflow-hidden" style={{ background: "#FFFBF6" }}>
+                <div key={product.id} className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}>
+                  {/* Square image frame */}
+                  <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#FFFBF6" }}>
                     {product.image ? (
                       <Image src={product.image} alt={product.shortName} fill className="object-contain p-2 transition-transform duration-500 group-hover:scale-105" />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center" style={{ color: product.color }}>
-                        <Icon name={product.icon} className="w-16 h-16" />
+                        <Icon name={product.icon} className="w-24 h-24" />
                       </div>
                     )}
                   </div>
 
-                  {/* Info — bottom 42% */}
-                  <div className="flex-[2] flex flex-col px-4 py-3 border-t border-gray-100 overflow-hidden">
-                    <div className="flex items-center justify-between gap-1 mb-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-white" style={{ background: product.color }}>
+                  {/* Card body */}
+                  <div className="p-6 flex-1 flex flex-col border-t border-gray-100">
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <span className="text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full text-white inline-block" style={{ background: product.color }}>
                         {product.category}
                       </span>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 flex-wrap justify-end">
                         {product.sizes.slice(0, 2).map((s) => (
-                          <span key={s} className="text-[10px] text-gray-400 border border-gray-200 px-1.5 py-0.5 rounded-full">{s}</span>
+                          <span key={s} className="text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded-full">{s}</span>
                         ))}
                       </div>
                     </div>
-                    <h2 className="font-bold text-gray-900 text-sm leading-snug mb-1 group-hover:text-green-700 transition-colors line-clamp-2">{product.name}</h2>
-                    <p className="text-[10px] text-gray-400 font-medium mb-2 line-clamp-1">{product.formula}</p>
-                    <div className="flex gap-2 mt-auto">
-                      <Link href={`/our-products/${product.id}`} className="flex-1 text-center py-1.5 rounded-full font-semibold text-white text-xs transition-all hover:opacity-90" style={{ background: "#2d7a3a" }}>
+                    <h2 className="font-bold text-gray-900 text-base mb-1 group-hover:text-green-700 transition-colors leading-snug">{product.name}</h2>
+                    <p className="text-xs text-gray-400 font-medium mb-1">{product.formula}</p>
+                    <p className="text-xs text-gray-400 italic mb-3">{product.subtitle}</p>
+                    <p className="text-sm text-gray-600 leading-relaxed mb-5 flex-1">{product.description}</p>
+                    <div className="flex gap-2">
+                      <Link href={`/our-products/${product.id}`} className="flex-1 text-center py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:opacity-90" style={{ background: "#2d7a3a" }}>
                         View Details
                       </Link>
-                      <button onClick={() => window.dispatchEvent(new CustomEvent("ella:open", { detail: { prompt: `Hey Ella tell me about ${product.name}` } }))} className="px-3 py-1.5 rounded-full border-2 text-xs font-semibold transition-all hover:bg-green-50" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
+                      <button onClick={() => window.dispatchEvent(new CustomEvent("ella:open", { detail: { prompt: `Hey Ella tell me about ${product.name}` } }))} className="px-3 py-2.5 rounded-full border-2 text-sm font-semibold transition-all hover:bg-green-50" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
                         Ask Ella
                       </button>
                     </div>
