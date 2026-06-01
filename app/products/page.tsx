@@ -84,7 +84,7 @@ export default function ProductsPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((product: Product) => (
-                <div key={product.id} className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}>
+                <div key={product.id} className="group bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}>
                   {/* Square image frame */}
                   <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#FFFBF6" }}>
                     {product.image ? (

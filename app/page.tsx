@@ -89,7 +89,7 @@ export default function HomePage() {
             {/* Eco-Spray */}
             <Link
               href="/our-products/2"
-              className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
+              className="group flex flex-col overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
             >
               {/* Product image */}
@@ -122,7 +122,7 @@ export default function HomePage() {
             {/* Liquid N.P.K */}
             <Link
               href="/our-products/3"
-              className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
+              className="group flex flex-col overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
             >
               <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#FFFBF6" }}>
@@ -154,7 +154,7 @@ export default function HomePage() {
             {/* 44-Plus */}
             <Link
               href="/our-products/10"
-              className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
+              className="group flex flex-col overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
             >
               <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#FFFBF6" }}>
