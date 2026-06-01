@@ -111,17 +111,7 @@ export default function ProductsPage() {
                     <h2 className="font-bold text-gray-900 text-base mb-1 group-hover:text-green-700 transition-colors leading-snug">{product.name}</h2>
                     <p className="text-xs text-gray-400 font-medium mb-1">{product.formula}</p>
                     <p className="text-xs text-gray-400 italic mb-3">{product.subtitle}</p>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-4 flex-1">{product.description}</p>
-                    <ul className="space-y-1.5 mb-5">
-                      {product.benefits.slice(0, 3).map((b) => (
-                        <li key={b} className="flex items-center gap-2 text-sm text-gray-700">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: "#2d7a3a" }}>
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          {b}
-                        </li>
-                      ))}
-                    </ul>
+                    <p className="text-sm text-gray-600 leading-relaxed mb-5 flex-1">{product.description}</p>
                     <div className="flex gap-2">
                       <Link href={`/our-products/${product.id}`} className="flex-1 text-center py-2.5 rounded-full font-semibold text-white text-sm transition-all hover:opacity-90" style={{ background: "#2d7a3a" }}>
                         View Details
