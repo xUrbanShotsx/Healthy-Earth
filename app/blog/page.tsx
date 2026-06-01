@@ -41,28 +41,48 @@ export default function BlogPage() {
     <div style={{ background: "#f6f7f4" }}>
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden" style={{ background: "#0d1f10", minHeight: 320 }}>
-        {/* Background image */}
+      <section className="relative overflow-hidden" style={{ minHeight: 380 }}>
+        {/* Background image — vibrant, high opacity */}
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=80"
+            src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1920&q=85"
             alt="Healthy Earth fields"
             fill
-            className="object-cover object-center opacity-30"
+            className="object-cover object-center"
             priority
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(13,31,16,0.6) 0%, rgba(13,31,16,0.85) 100%)" }} />
+          {/* Multi-stop overlay: left-side dark for text legibility, right stays bright */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(105deg, rgba(10,28,12,0.82) 0%, rgba(13,40,16,0.68) 45%, rgba(20,55,24,0.38) 75%, rgba(20,55,24,0.18) 100%)",
+            }}
+          />
+          {/* Subtle bottom fade into page background */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-24"
+            style={{ background: "linear-gradient(to bottom, transparent, #f6f7f4)" }}
+          />
         </div>
 
+        {/* Decorative grain texture overlay */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+        }} />
+
         {/* Content */}
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#6fcf7c" }}>
-            Growing Knowledge
-          </p>
-          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-4">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="w-8 h-[2px] rounded-full" style={{ background: "#6fcf7c" }} />
+            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6fcf7c" }}>
+              Growing Knowledge
+            </p>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-5">
             The Healthy Earth<br />Blog
           </h1>
-          <p className="text-white/50 max-w-md text-base leading-relaxed">
+          <p className="text-white/60 max-w-md text-base leading-relaxed">
             Practical advice on soil health, lawn care, gardening and farming — from the BioCare Agronomy Team.
           </p>
         </div>
