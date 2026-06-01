@@ -80,7 +80,7 @@ export default function BlogPage() {
             </p>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-5">
-            The Healthy Earth<br />Blog
+            The Healthy Earth<br />Chat
           </h1>
           <p className="text-white/60 max-w-md text-base leading-relaxed">
             Practical advice on soil health, lawn care, gardening and farming — from the BioCare Agronomy Team.
