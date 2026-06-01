@@ -93,7 +93,7 @@ export default function HomePage() {
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
             >
               {/* Product image */}
-              <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#f5f2ec" }}>
+              <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#fff7d3" }}>
                 <Image
                   src="/products/Eco Spray.png"
                   alt="BioCare Eco-Spray"
@@ -125,7 +125,7 @@ export default function HomePage() {
               className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
             >
-              <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#f5f2ec" }}>
+              <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#fff7d3" }}>
                 <Image
                   src="/products/Liquid NPK.png"
                   alt="Liquid N.P.K Fertiliser"
@@ -157,7 +157,7 @@ export default function HomePage() {
               className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
             >
-              <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#f5f2ec" }}>
+              <div className="relative w-full aspect-square flex-shrink-0 overflow-hidden" style={{ background: "#fff7d3" }}>
                 <Image
                   src="/products/44 Plus Coated Fertiliser.png"
                   alt="HealthyEarth 44-Plus"
