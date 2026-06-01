@@ -1,163 +1,300 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 
-type Message = {
-  role: "user" | "assistant";
-  content: string;
-};
+type Message = { role: "user" | "assistant"; content: string };
 
-const ELLA_SUGGESTIONS = [
-  "My lawn has yellow patches — what's wrong?",
-  "How do I improve my vegetable garden soil?",
-  "What fertilizer is best for fruit trees?",
-  "My plants look pale and aren't growing — why?",
-  "How often should I fertilize my lawn?",
-  "What's the best product for seed germination?",
+const SUGGESTIONS = [
+  "My lawn has yellow patches",
+  "Best fertiliser for tomatoes?",
+  "How do I fix heavy clay soil?",
+  "My fruit trees won't flower",
+  "Plants look pale and weak",
+  "How to improve soil biology?",
 ];
 
-const ELLA_RESPONSES: Record<string, string> = {
-  default: "Hi! I'm Ella, your plant nutrition expert. Could you describe what you're noticing with your plants? For example, are there colour changes, stunted growth, or unusual spots? The more detail you share, the better I can help.",
-};
-
-function getEllaResponse(userMessage: string): string {
-  const msg = userMessage.toLowerCase();
-  if (msg.includes("yellow") || msg.includes("pale")) {
-    return "Yellow or pale leaves often indicate a nitrogen deficiency, though it can also be caused by iron or magnesium shortfalls. For lawns, I'd recommend our **HealthyEarth Lawn Fertiliser (N 13 : P 3 : K 14)** — the nitrogen will restore that deep green colour quickly. For garden beds or crops, our **FoliMax** foliar spray can correct micronutrient deficiencies rapidly. Can you tell me more about the plant type and how long this has been happening?";
-  }
-  if (msg.includes("lawn")) {
-    return "Great question about lawns! For general lawn health, our **HealthyEarth Lawn Fertiliser (N 13 : P 3 : K 14)** is a fantastic all-rounder — it suits every grass variety and provides a balanced NPK ratio plus trace elements. Apply at 30–40g/m² every 6–8 weeks during the growing season. Are you dealing with a specific issue like yellowing, bare patches, or slow growth?";
-  }
-  if (msg.includes("vegetable") || msg.includes("veggie") || msg.includes("garden soil")) {
-    return "For vegetable gardens, soil health is everything! I'd start with our **HealthyEarth VegePro (N 8 : P 4 : K 6)** — it's an organic-mineral blend that feeds your plants while building long-term soil structure. If you're starting new beds, incorporating **SilicaMax** will stimulate the soil microbiome and help plants take up nutrients more efficiently. What are you planning to grow?";
-  }
-  if (msg.includes("fruit") || msg.includes("tree")) {
-    return "Fruit trees have specific nutritional needs that change through the seasons. In spring (bud burst to fruit set), focus on potassium and phosphorus for flowering and fruit development. Our **HealthyEarth Booster** is excellent around harvest time — it improves sugar (Brix) levels, palatability, and fruit quality significantly. Are your trees showing any visible symptoms, or is this more about maximising yield and flavour?";
-  }
-  if (msg.includes("seed") || msg.includes("germination") || msg.includes("germinate")) {
-    return "For seed germination, our **HealthyEarth SeedPrimer** is exactly what you need. It's a biostimulant complex that promotes fast, uniform emergence and early root development — you'll notice significantly better establishment compared to untreated seed. It works for vegetables, pastures, and broadacre crops. Are you sowing directly or using trays/pots?";
-  }
-  if (msg.includes("silica") || msg.includes("rhizosphere") || msg.includes("soil microbe")) {
-    return "**Healthy Earth SilicaMax** is our premium silica product at 51% SiO₂ — one of the highest concentrations available. Silica strengthens plant cell walls (making them more resistant to pests, disease and drought), and it stimulates the rhizosphere — the zone around plant roots where beneficial microbes live. It's especially valuable in sandy or degraded soils. Would you like application rate information?";
-  }
-  if (msg.includes("how often") || msg.includes("frequency") || msg.includes("apply")) {
-    return "Application frequency depends on the product and plant type. As a general guide:\n\n• **Lawn fertiliser** — every 6–8 weeks during growing season\n• **Foliar sprays** — every 2–4 weeks during active growth\n• **Soil amendments (SilicaMax)** — once or twice per season\n• **SeedPrimer** — applied at sowing, once only\n\nWhich product or plant type are you asking about specifically?";
-  }
-  if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
-    return "Hello! I'm Ella, Healthy Earth's AI plant nutrition expert. I'm here to help you diagnose plant problems and find the right products for your situation. What's going on with your plants today?";
-  }
-  return "Thanks for sharing that! Based on what you've described, I'd suggest starting with a soil assessment to identify the limiting factor. Our range covers most Australian soil and plant challenges. Could you tell me:\n\n1. What type of plants or crops are you working with?\n2. What symptoms are you seeing?\n3. Are you gardening at home or in a commercial setting?\n\nThis will help me give you a precise recommendation.";
-}
-
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: ELLA_RESPONSES.default },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [started, setStarted] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
 
-  function sendMessage(text?: string) {
-    const msg = text || input.trim();
-    if (!msg || loading) return;
+  const sendMessage = useCallback(async (textOverride?: string) => {
+    const text = (textOverride ?? input).trim();
+    if (!text || loading) return;
+    setStarted(true);
+    const newMessages: Message[] = [...messages, { role: "user", content: text }];
+    setMessages(newMessages);
     setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: msg }]);
     setLoading(true);
-    setTimeout(() => {
-      setMessages((prev) => [...prev, { role: "assistant", content: getEllaResponse(msg) }]);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+      if (!res.ok || !res.body) throw new Error("Failed");
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantText = "";
+      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const lines = decoder.decode(value, { stream: true }).split("\n");
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const data = line.slice(6).trim();
+          if (data === "[DONE]") break;
+          try {
+            const delta = JSON.parse(data).choices?.[0]?.delta?.content ?? "";
+            assistantText += delta;
+            setMessages((prev) => {
+              const updated = [...prev];
+              updated[updated.length - 1] = { role: "assistant", content: assistantText };
+              return updated;
+            });
+          } catch { /* skip */ }
+        }
+      }
+    } catch {
+      setMessages((prev) => [...prev, { role: "assistant", content: "Something went wrong — give it another go!" }]);
+    } finally {
       setLoading(false);
-    }, 1000 + Math.random() * 800);
-  }
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [input, loading, messages]);
 
   return (
-    <div className="flex flex-col" style={{ height: "calc(100vh - 64px)" }}>
-      {/* Top bar */}
-      <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-3 bg-white">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg, #2d7a3a, #8bc34a)" }}>E</div>
-        <div>
-          <p className="font-semibold text-gray-900 text-sm">Ella</p>
-          <p className="text-xs text-gray-400">Plant Nutrition Expert · AI-powered</p>
-        </div>
-        <div className="ml-auto flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          <span className="text-xs text-gray-400">Online</span>
-        </div>
-      </div>
+    <div className="flex" style={{ height: "calc(100dvh - 80px)" }}>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4" style={{ background: "#f9f6f0" }}>
-        <div className="max-w-3xl mx-auto space-y-4">
-          {messages.map((msg, i) => (
-            <div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
-              {msg.role === "assistant" && (
-                <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-bold" style={{ background: "linear-gradient(135deg, #2d7a3a, #8bc34a)" }}>E</div>
-              )}
-              <div className={`max-w-lg px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${msg.role === "user" ? "text-white rounded-tr-sm" : "bg-white text-gray-800 rounded-tl-sm shadow-sm"}`} style={msg.role === "user" ? { background: "#2d7a3a" } : {}}>
-                {msg.content.split("**").map((part, j) =>
-                  j % 2 === 1 ? <strong key={j}>{part}</strong> : part
-                )}
+      {/* ── LEFT PANEL ── */}
+      <div className="hidden lg:flex flex-col w-[400px] flex-shrink-0 relative overflow-hidden">
+        {/* Background image */}
+        <Image
+          src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=85"
+          alt="Lush garden"
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, rgba(10,28,12,0.88) 0%, rgba(13,50,18,0.80) 50%, rgba(10,28,12,0.92) 100%)" }} />
+
+        {/* Content */}
+        <div className="relative flex flex-col h-full p-8 pt-10">
+          {/* Ella avatar + name */}
+          <div className="flex items-center gap-4 mb-8">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-bold text-white flex-shrink-0"
+              style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)" }}
+            >
+              E
+            </div>
+            <div>
+              <p className="font-bold text-white text-lg leading-tight">Ella</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-xs font-medium" style={{ color: "#a5d6a7" }}>Online now</span>
               </div>
             </div>
-          ))}
-          {loading && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-bold" style={{ background: "linear-gradient(135deg, #2d7a3a, #8bc34a)" }}>E</div>
-              <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
-                <div className="flex gap-1">
-                  {[0, 1, 2].map((d) => (
-                    <div key={d} className="w-2 h-2 rounded-full animate-bounce" style={{ background: "#2d7a3a", animationDelay: `${d * 0.15}s` }} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={bottomRef} />
-        </div>
-      </div>
+          </div>
 
-      {/* Suggestions */}
-      {messages.length <= 1 && (
-        <div className="px-4 py-3 bg-white border-t border-gray-100">
-          <div className="max-w-3xl mx-auto">
-            <p className="text-xs text-gray-400 mb-2">Try asking:</p>
-            <div className="flex flex-wrap gap-2">
-              {ELLA_SUGGESTIONS.map((s) => (
-                <button key={s} onClick={() => sendMessage(s)} className="text-xs px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:border-green-400 hover:text-green-700 transition-colors bg-white">
+          {/* Description */}
+          <div className="mb-8">
+            <h1 className="font-bold text-white text-2xl leading-tight mb-3">
+              Plant Problem<br />Solver
+            </h1>
+            <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
+              Tell Ella what&apos;s going on with your plants. She&apos;ll diagnose the problem and recommend exactly what your soil needs.
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="w-full h-px mb-6" style={{ background: "rgba(255,255,255,0.08)" }} />
+
+          {/* Suggestions */}
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] mb-4" style={{ color: "rgba(255,255,255,0.35)" }}>
+              Try asking
+            </p>
+            <div className="flex flex-col gap-2">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => sendMessage(s)}
+                  className="text-left text-sm px-4 py-2.5 rounded-xl transition-all duration-300 hover:bg-white/15 text-white/70 hover:text-white"
+                  style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.08)" }}
+                >
                   {s}
                 </button>
               ))}
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Input */}
-      <div className="px-4 py-4 bg-white border-t border-gray-100">
-        <div className="max-w-3xl mx-auto flex gap-3">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder="Ask Ella about your plants..."
-            className="flex-1 px-4 py-3 rounded-full border border-gray-200 text-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all"
-          />
-          <button
-            onClick={() => sendMessage()}
-            disabled={!input.trim() || loading}
-            className="w-11 h-11 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-40"
-            style={{ background: "#2d7a3a" }}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </button>
+          {/* Footer */}
+          <div className="mt-auto pt-8">
+            <p className="text-[10px] uppercase tracking-widest font-medium" style={{ color: "rgba(255,255,255,0.25)" }}>
+              Healthy Earth · BioCare Fertilisers
+            </p>
+            <p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.18)" }}>
+              Ella&apos;s advice is general in nature. Always read the label.
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* ── RIGHT PANEL — chat ── */}
+      <div className="flex-1 flex flex-col min-w-0" style={{ background: "#f8f6f2" }}>
+
+        {/* Mobile header */}
+        <div className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-100 flex-shrink-0">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>E</div>
+          <div>
+            <p className="font-bold text-gray-900 text-sm">Plant Problem Solver</p>
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-xs text-gray-400">Ella is online</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Messages area */}
+        <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
+          <div className="max-w-2xl mx-auto">
+
+            {/* Empty state */}
+            {messages.length === 0 && !started && (
+              <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center py-16">
+                <div
+                  className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold text-white mb-5"
+                  style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)", boxShadow: "0 12px 40px rgba(45,122,58,0.30)" }}
+                >
+                  E
+                </div>
+                <h2 className="font-bold text-gray-900 text-xl mb-2">G&apos;day! I&apos;m Ella</h2>
+                <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
+                  Describe what&apos;s going on with your plants and I&apos;ll sort you out. Yellow leaves, patchy lawn, poor growth — I&apos;ve seen it all.
+                </p>
+                {/* Mobile suggestions */}
+                <div className="lg:hidden mt-6 flex flex-wrap gap-2 justify-center">
+                  {SUGGESTIONS.slice(0, 4).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => sendMessage(s)}
+                      className="text-xs px-3 py-2 rounded-full border transition-all hover:border-green-400 hover:text-green-700"
+                      style={{ borderColor: "#e5e7eb", color: "#6b7280", background: "white" }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Messages */}
+            <div className="space-y-5">
+              {messages.map((msg, i) => (
+                <div
+                  key={i}
+                  className={`flex items-end gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+                  style={{ animation: "fadeUp 0.4s cubic-bezier(0.32,0.72,0,1) both" }}
+                >
+                  {msg.role === "assistant" && (
+                    <div
+                      className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-bold text-xs flex-shrink-0 mb-0.5"
+                      style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}
+                    >
+                      E
+                    </div>
+                  )}
+                  <div
+                    className="rounded-2xl px-4 py-3 text-sm leading-relaxed max-w-[75%]"
+                    style={msg.role === "user"
+                      ? { background: "linear-gradient(135deg, #1a5227, #2d7a3a)", color: "white", borderBottomRightRadius: "4px" }
+                      : { background: "white", color: "#1f2937", borderBottomLeftRadius: "4px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.05)" }
+                    }
+                  >
+                    {msg.content || (
+                      <span className="flex gap-1 items-center py-0.5">
+                        {[0, 150, 300].map((d) => (
+                          <span key={d} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: `${d}ms` }} />
+                        ))}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {loading && messages[messages.length - 1]?.role === "user" && (
+                <div className="flex items-end gap-3" style={{ animation: "fadeUp 0.4s cubic-bezier(0.32,0.72,0,1) both" }}>
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-bold text-xs flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>E</div>
+                  <div className="bg-white rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm border border-black/5">
+                    <span className="flex gap-1 items-center py-0.5">
+                      {[0, 150, 300].map((d) => <span key={d} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+                    </span>
+                  </div>
+                </div>
+              )}
+              <div ref={bottomRef} />
+            </div>
+          </div>
+        </div>
+
+        {/* Disclaimer */}
+        <div className="flex-shrink-0 px-4 py-2 text-center" style={{ background: "#f8f6f2", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
+          <p className="text-xs" style={{ color: "#aaa" }}>Ella&apos;s advice is general in nature. Always read the product label before use.</p>
+        </div>
+
+        {/* Input bar */}
+        <div className="flex-shrink-0 bg-white border-t border-gray-100 px-4 py-4 md:px-8">
+          <div className="max-w-2xl mx-auto">
+            <div
+              className="flex gap-3 items-center px-2 py-2 rounded-2xl transition-all duration-300"
+              style={{ background: "#f4f6f4", border: "1.5px solid rgba(45,122,58,0.15)" }}
+            >
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                placeholder="Ask Ella about your plants…"
+                disabled={loading}
+                className="flex-1 bg-transparent text-sm px-3 py-2 focus:outline-none placeholder-gray-400 disabled:opacity-50"
+              />
+              <button
+                onClick={() => sendMessage()}
+                disabled={loading || !input.trim()}
+                className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all hover:opacity-90 disabled:opacity-30 active:scale-95"
+                style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)", boxShadow: "0 4px 12px rgba(45,122,58,0.35)" }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Fade-up keyframe */}
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
