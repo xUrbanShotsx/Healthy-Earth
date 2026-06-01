@@ -37,7 +37,7 @@ function Counter({ num, suffix, label, started }: { num: number; suffix: string;
   return (
     <div className="text-center flex-1 min-w-[120px] flex flex-col items-center">
       <div
-        className="font-mono font-bold tabular-nums transition-all"
+        className="font-bold tabular-nums transition-all"
         style={{
           fontSize: "clamp(2.2rem, 4vw, 3.2rem)",
           color: "white",

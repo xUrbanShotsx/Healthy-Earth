@@ -89,10 +89,10 @@ export default function HomePage() {
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-xs font-bold text-green-400 uppercase tracking-widest">Farming · Soil Health</span>
                   <span className="w-1 h-1 rounded-full bg-green-600" />
-                  <span className="font-mono text-green-500 text-xs">ID — 17</span>
+                  <span className="text-green-500 text-xs">ID — 17</span>
                 </div>
                 <h3 className="text-4xl font-bold text-white mb-1">SilicaMax</h3>
-                <p className="font-mono text-green-300 text-lg mb-6">51% SiO₂ + Broad Trace Elements</p>
+                <p className="text-green-300 text-lg mb-6">51% SiO₂ + Broad Trace Elements</p>
                 <p className="text-white/60 leading-relaxed max-w-md">
                   Silicon physically strengthens cell walls — making plants mechanically harder for insects and fungal spores to penetrate. SilicaMax delivers 51% SiO₂ in a non-crystalline, plant-available form that simultaneously activates rhizosphere biology and improves drought tolerance.
                 </p>
@@ -117,7 +117,7 @@ export default function HomePage() {
                 <div>
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#4caf50" }}>Gardening · Lawn</span>
                   <h3 className="text-xl font-bold text-gray-900 mt-2 mb-1">Pro-Strength Lawn Fertiliser</h3>
-                  <p className="font-mono text-sm mb-4" style={{ color: "#2d7a3a" }}>N 13 · P 3 · K 14 + Traces</p>
+                  <p className="text-sm mb-4" style={{ color: "#2d7a3a" }}>N 13 · P 3 · K 14 + Traces</p>
                   <p className="text-gray-500 text-sm leading-relaxed">Suits all Australian grass types. Results visible in 7–10 days. High potassium builds heat and drought tolerance between applications.</p>
                 </div>
                 <Link href="/our-products/9" className="inline-flex items-center gap-1.5 text-sm font-bold mt-5 hover:opacity-70 transition-opacity" style={{ color: "#2d7a3a" }}>
@@ -130,7 +130,7 @@ export default function HomePage() {
                 <div>
                   <span className="text-xs font-bold uppercase tracking-widest text-orange-400">Farming · Quality</span>
                   <h3 className="text-xl font-bold text-white mt-2 mb-1">Booster</h3>
-                  <p className="font-mono text-sm text-orange-300 mb-4">No Withholding Period</p>
+                  <p className="text-sm text-orange-300 mb-4">No Withholding Period</p>
                   <p className="text-white/60 text-sm leading-relaxed">Increases Brix, improves flavour, extends shelf life. Apply at fruit set and again pre-harvest — safe right through to picking.</p>
                 </div>
                 <Link href="/our-products/25" className="inline-flex items-center gap-1.5 text-sm font-bold mt-5 text-orange-400 hover:text-white transition-colors">
@@ -192,7 +192,7 @@ export default function HomePage() {
               <div className="p-8 border-b border-gray-200">
                 <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Flagship Farming Formula</span>
                 <h3 className="text-3xl font-bold text-gray-900 mt-2">44-Plus</h3>
-                <p className="font-mono text-sm mt-1" style={{ color: "#2d7a3a" }}>N 13.9 · P 3.7 · K 10.7 · S 10.7</p>
+                <p className="text-sm mt-1" style={{ color: "#2d7a3a" }}>N 13.9 · P 3.7 · K 10.7 · S 10.7</p>
               </div>
               <div className="p-8">
                 <p className="text-gray-600 text-sm leading-relaxed mb-6">The four biostimulants included alongside NPK — seaweed, humic acid, fish and trace elements — work synergistically to improve nutrient efficiency, soil biology and plant resilience in one application.</p>
@@ -299,7 +299,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <div key={i} className="bg-white rounded-3xl p-8 border border-gray-100 flex flex-col">
-                <div className="text-5xl font-serif text-gray-200 leading-none mb-4">&ldquo;</div>
+                <div className="text-5xl font-sans text-gray-200 leading-none mb-4">&ldquo;</div>
                 <p className="text-gray-700 leading-relaxed flex-1 mb-6">{t.text}</p>
                 <div className="flex items-center justify-between pt-5 border-t border-gray-100">
                   <div>
