@@ -93,12 +93,12 @@ export default function HomePage() {
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
             >
               {/* Product image */}
-              <div className="relative h-72 bg-gray-50 flex-shrink-0 flex items-center justify-center overflow-hidden">
+              <div className="relative w-full aspect-square bg-gray-50 flex-shrink-0 overflow-hidden">
                 <Image
                   src="/products/Eco Spray.png"
                   alt="BioCare Eco-Spray"
                   fill
-                  className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain p-8 transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex-1 flex flex-col p-6 border-t border-gray-100">
@@ -125,12 +125,12 @@ export default function HomePage() {
               className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
             >
-              <div className="relative h-72 bg-gray-50 flex-shrink-0 flex items-center justify-center overflow-hidden">
+              <div className="relative w-full aspect-square bg-gray-50 flex-shrink-0 overflow-hidden">
                 <Image
                   src="/products/Liquid NPK.png"
                   alt="Liquid N.P.K Fertiliser"
                   fill
-                  className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain p-8 transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex-1 flex flex-col p-6 border-t border-gray-100">
@@ -157,12 +157,12 @@ export default function HomePage() {
               className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
             >
-              <div className="relative h-72 bg-gray-50 flex-shrink-0 flex items-center justify-center overflow-hidden">
+              <div className="relative w-full aspect-square bg-gray-50 flex-shrink-0 overflow-hidden">
                 <Image
                   src="/products/44 Plus Coated Fertiliser.png"
                   alt="HealthyEarth 44-Plus"
                   fill
-                  className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain p-8 transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex-1 flex flex-col p-6 border-t border-gray-100">
