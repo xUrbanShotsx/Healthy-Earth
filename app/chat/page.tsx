@@ -6,12 +6,12 @@ import Image from "next/image";
 type Message = { role: "user" | "assistant"; content: string };
 
 const SUGGESTIONS = [
-  "My lawn has yellow patches",
-  "Best fertiliser for tomatoes?",
-  "How do I fix heavy clay soil?",
-  "My fruit trees won't flower",
-  "Plants look pale and weak",
-  "How to improve soil biology?",
+  { icon: "🌿", text: "My lawn has yellow patches" },
+  { icon: "🍅", text: "Best fertiliser for tomatoes?" },
+  { icon: "🌱", text: "How do I fix clay soil?" },
+  { icon: "🌳", text: "My fruit trees won't flower" },
+  { icon: "🍃", text: "Plants look pale and weak" },
+  { icon: "🔬", text: "How to improve soil biology?" },
 ];
 
 export default function ChatPage() {
@@ -76,159 +76,124 @@ export default function ChatPage() {
   }, [input, loading, messages]);
 
   return (
-    <div className="flex" style={{ height: "calc(100dvh - 80px)" }}>
+    <div className="relative flex flex-col" style={{ minHeight: "calc(100dvh - 80px)" }}>
 
-      {/* ── LEFT PANEL ── */}
-      <div className="hidden lg:flex flex-col w-[400px] flex-shrink-0 relative overflow-hidden">
-        {/* Background image */}
+      {/* ── Full-page background ── */}
+      <div className="fixed inset-0 -z-10">
         <Image
-          src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=85"
-          alt="Lush garden"
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=80"
+          alt="background"
           fill
-          className="object-cover"
+          className="object-cover object-center"
           priority
         />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, rgba(10,28,12,0.88) 0%, rgba(13,50,18,0.80) 50%, rgba(10,28,12,0.92) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, rgba(8,22,10,0.82) 0%, rgba(12,35,15,0.75) 50%, rgba(8,22,10,0.88) 100%)" }} />
+      </div>
 
-        {/* Content */}
-        <div className="relative flex flex-col h-full p-8 pt-10">
-          {/* Ella avatar + name */}
-          <div className="flex items-center gap-4 mb-8">
+      {/* ── Page layout ── */}
+      <div className="flex flex-col flex-1" style={{ height: "calc(100dvh - 80px)" }}>
+
+        {/* ── Hero header ── */}
+        <div className="flex-shrink-0 pt-10 pb-6 px-4 text-center">
+          {/* Avatar */}
+          <div className="relative inline-block mb-4">
             <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-bold text-white flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)" }}
+              className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold text-white mx-auto"
+              style={{
+                background: "linear-gradient(135deg, #1a5227, #2d7a3a)",
+                boxShadow: "0 0 0 3px rgba(111,207,124,0.25), 0 12px 40px rgba(45,122,58,0.4)",
+              }}
             >
               E
             </div>
-            <div>
-              <p className="font-bold text-white text-lg leading-tight">Ella</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-xs font-medium" style={{ color: "#a5d6a7" }}>Online now</span>
-              </div>
-            </div>
+            {/* Live indicator */}
+            <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white/10 flex items-center justify-center" style={{ background: "#0d1f10" }}>
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse block" />
+            </span>
           </div>
-
-          {/* Description */}
-          <div className="mb-8">
-            <h1 className="font-bold text-white text-2xl leading-tight mb-3">
-              Plant Problem<br />Solver
-            </h1>
-            <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-              Tell Ella what&apos;s going on with your plants. She&apos;ll diagnose the problem and recommend exactly what your soil needs.
-            </p>
-          </div>
-
-          {/* Divider */}
-          <div className="w-full h-px mb-6" style={{ background: "rgba(255,255,255,0.08)" }} />
-
-          {/* Suggestions */}
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] mb-4" style={{ color: "rgba(255,255,255,0.35)" }}>
-              Try asking
-            </p>
-            <div className="flex flex-col gap-2">
-              {SUGGESTIONS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => sendMessage(s)}
-                  className="text-left text-sm px-4 py-2.5 rounded-xl transition-all duration-300 hover:bg-white/15 text-white/70 hover:text-white"
-                  style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.08)" }}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-auto pt-8">
-            <p className="text-[10px] uppercase tracking-widest font-medium" style={{ color: "rgba(255,255,255,0.25)" }}>
-              Healthy Earth · BioCare Fertilisers
-            </p>
-            <p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.18)" }}>
-              Ella&apos;s advice is general in nature. Always read the label.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* ── RIGHT PANEL — chat ── */}
-      <div className="flex-1 flex flex-col min-w-0" style={{ background: "#f8f6f2" }}>
-
-        {/* Mobile header */}
-        <div className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-100 flex-shrink-0">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>E</div>
-          <div>
-            <p className="font-bold text-gray-900 text-sm">Plant Problem Solver</p>
-            <div className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs text-gray-400">Ella is online</span>
-            </div>
-          </div>
+          <h1 className="font-bold text-white text-xl leading-tight">Plant Problem Solver</h1>
+          <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.45)" }}>Powered by Ella · Healthy Earth</p>
         </div>
 
-        {/* Messages area */}
-        <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
-          <div className="max-w-2xl mx-auto">
-
-            {/* Empty state */}
-            {messages.length === 0 && !started && (
-              <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center py-16">
-                <div
-                  className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold text-white mb-5"
-                  style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)", boxShadow: "0 12px 40px rgba(45,122,58,0.30)" }}
-                >
-                  E
-                </div>
-                <h2 className="font-bold text-gray-900 text-xl mb-2">G&apos;day! I&apos;m Ella</h2>
-                <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
-                  Describe what&apos;s going on with your plants and I&apos;ll sort you out. Yellow leaves, patchy lawn, poor growth — I&apos;ve seen it all.
-                </p>
-                {/* Mobile suggestions */}
-                <div className="lg:hidden mt-6 flex flex-wrap gap-2 justify-center">
-                  {SUGGESTIONS.slice(0, 4).map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => sendMessage(s)}
-                      className="text-xs px-3 py-2 rounded-full border transition-all hover:border-green-400 hover:text-green-700"
-                      style={{ borderColor: "#e5e7eb", color: "#6b7280", background: "white" }}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
+        {/* ── Chat container ── */}
+        <div className="flex-1 flex flex-col max-w-2xl w-full mx-auto px-4 pb-4 min-h-0">
+          <div
+            className="flex flex-col flex-1 rounded-3xl overflow-hidden min-h-0"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              border: "1px solid rgba(255,255,255,0.10)",
+              boxShadow: "0 32px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
+            }}
+          >
             {/* Messages */}
-            <div className="space-y-5">
+            <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
+
+              {/* Empty state */}
+              {messages.length === 0 && (
+                <div className="flex flex-col items-center justify-center h-full min-h-[200px] text-center py-8">
+                  <p className="font-semibold text-white text-base mb-1">G&apos;day! I&apos;m Ella 👋</p>
+                  <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.45)" }}>
+                    Tell me what&apos;s going on with your plants and I&apos;ll sort you out.
+                  </p>
+                  {/* Suggestion grid */}
+                  <div className="grid grid-cols-2 gap-2 w-full max-w-sm">
+                    {SUGGESTIONS.map((s) => (
+                      <button
+                        key={s.text}
+                        onClick={() => sendMessage(s.text)}
+                        className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-left text-xs font-medium transition-all duration-300 hover:bg-white/15 active:scale-95"
+                        style={{
+                          background: "rgba(255,255,255,0.07)",
+                          border: "1px solid rgba(255,255,255,0.10)",
+                          color: "rgba(255,255,255,0.75)",
+                        }}
+                      >
+                        <span className="text-base flex-shrink-0">{s.icon}</span>
+                        <span className="leading-snug">{s.text}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Message bubbles */}
               {messages.map((msg, i) => (
                 <div
                   key={i}
-                  className={`flex items-end gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
-                  style={{ animation: "fadeUp 0.4s cubic-bezier(0.32,0.72,0,1) both" }}
+                  className={`flex items-end gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+                  style={{ animation: "fadeUp 0.45s cubic-bezier(0.32,0.72,0,1) both" }}
                 >
                   {msg.role === "assistant" && (
                     <div
-                      className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-bold text-xs flex-shrink-0 mb-0.5"
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0 mb-0.5"
                       style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}
                     >
                       E
                     </div>
                   )}
                   <div
-                    className="rounded-2xl px-4 py-3 text-sm leading-relaxed max-w-[75%]"
+                    className="rounded-2xl px-4 py-3 text-sm leading-relaxed max-w-[80%]"
                     style={msg.role === "user"
-                      ? { background: "linear-gradient(135deg, #1a5227, #2d7a3a)", color: "white", borderBottomRightRadius: "4px" }
-                      : { background: "white", color: "#1f2937", borderBottomLeftRadius: "4px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.05)" }
+                      ? {
+                          background: "linear-gradient(135deg, #1a5227, #2d7a3a)",
+                          color: "white",
+                          borderBottomRightRadius: "6px",
+                          boxShadow: "0 4px 16px rgba(45,122,58,0.35)",
+                        }
+                      : {
+                          background: "rgba(255,255,255,0.10)",
+                          color: "rgba(255,255,255,0.90)",
+                          borderBottomLeftRadius: "6px",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                        }
                     }
                   >
                     {msg.content || (
                       <span className="flex gap-1 items-center py-0.5">
                         {[0, 150, 300].map((d) => (
-                          <span key={d} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: `${d}ms` }} />
+                          <span key={d} className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: "rgba(255,255,255,0.4)", animationDelay: `${d}ms` }} />
                         ))}
                       </span>
                     )}
@@ -236,64 +201,74 @@ export default function ChatPage() {
                 </div>
               ))}
 
+              {/* Typing indicator */}
               {loading && messages[messages.length - 1]?.role === "user" && (
-                <div className="flex items-end gap-3" style={{ animation: "fadeUp 0.4s cubic-bezier(0.32,0.72,0,1) both" }}>
-                  <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-bold text-xs flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>E</div>
-                  <div className="bg-white rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm border border-black/5">
+                <div className="flex items-end gap-2.5" style={{ animation: "fadeUp 0.45s cubic-bezier(0.32,0.72,0,1) both" }}>
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>E</div>
+                  <div className="rounded-2xl rounded-bl-md px-4 py-3" style={{ background: "rgba(255,255,255,0.10)", border: "1px solid rgba(255,255,255,0.08)" }}>
                     <span className="flex gap-1 items-center py-0.5">
-                      {[0, 150, 300].map((d) => <span key={d} className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+                      {[0, 150, 300].map((d) => (
+                        <span key={d} className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: "rgba(255,255,255,0.4)", animationDelay: `${d}ms` }} />
+                      ))}
                     </span>
                   </div>
                 </div>
               )}
               <div ref={bottomRef} />
             </div>
-          </div>
-        </div>
 
-        {/* Disclaimer */}
-        <div className="flex-shrink-0 px-4 py-2 text-center" style={{ background: "#f8f6f2", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
-          <p className="text-xs" style={{ color: "#aaa" }}>Ella&apos;s advice is general in nature. Always read the product label before use.</p>
-        </div>
+            {/* Disclaimer */}
+            <div className="flex-shrink-0 px-5 py-1.5 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+              <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.25)" }}>
+                Ella&apos;s advice is general in nature. Always read the product label before use.
+              </p>
+            </div>
 
-        {/* Input bar */}
-        <div className="flex-shrink-0 bg-white border-t border-gray-100 px-4 py-4 md:px-8">
-          <div className="max-w-2xl mx-auto">
-            <div
-              className="flex gap-3 items-center px-2 py-2 rounded-2xl transition-all duration-300"
-              style={{ background: "#f4f6f4", border: "1.5px solid rgba(45,122,58,0.15)" }}
-            >
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                placeholder="Ask Ella about your plants…"
-                disabled={loading}
-                className="flex-1 bg-transparent text-sm px-3 py-2 focus:outline-none placeholder-gray-400 disabled:opacity-50"
-              />
-              <button
-                onClick={() => sendMessage()}
-                disabled={loading || !input.trim()}
-                className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all hover:opacity-90 disabled:opacity-30 active:scale-95"
-                style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)", boxShadow: "0 4px 12px rgba(45,122,58,0.35)" }}
+            {/* Input bar */}
+            <div className="flex-shrink-0 px-4 py-4">
+              <div
+                className="flex items-center gap-2 px-2 py-2 rounded-2xl transition-all duration-300"
+                style={{
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                }}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-              </button>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                  placeholder="Ask Ella about your plants…"
+                  disabled={loading}
+                  className="flex-1 bg-transparent text-sm px-3 py-2 focus:outline-none disabled:opacity-50"
+                  style={{ color: "white" }}
+                />
+                <button
+                  onClick={() => sendMessage()}
+                  disabled={loading || !input.trim()}
+                  className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all hover:opacity-90 disabled:opacity-25 active:scale-95"
+                  style={{
+                    background: "linear-gradient(135deg, #1a5227, #2d7a3a)",
+                    boxShadow: "0 4px 16px rgba(45,122,58,0.45)",
+                  }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Fade-up keyframe */}
       <style>{`
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(12px); }
+          from { opacity: 0; transform: translateY(14px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        input::placeholder { color: rgba(255,255,255,0.35); }
       `}</style>
     </div>
   );
