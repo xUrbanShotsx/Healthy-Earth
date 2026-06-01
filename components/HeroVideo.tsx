@@ -24,29 +24,34 @@ export default function HeroVideo() {
         className="absolute inset-0 w-full h-full object-cover object-center md:object-right-top"
       />
 
-      {/* Chat to Ella tab — bottom centre */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
+      {/* Chat to Ella — bold CTA bottom centre */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
         <button
           onClick={() => window.dispatchEvent(new CustomEvent("ella:open", { detail: { fullscreen: true } }))}
-          className="group flex items-center gap-3 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95"
+          className="group relative flex items-center gap-4 pl-5 pr-2 py-2 rounded-full transition-all duration-500 hover:scale-105 active:scale-95"
           style={{
-            background: "rgba(255,255,255,0.12)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid rgba(255,255,255,0.25)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+            background: "linear-gradient(135deg, #1a5227, #2d7a3a)",
+            boxShadow: "0 0 0 1px rgba(255,255,255,0.15), 0 8px 40px rgba(45,122,58,0.55), 0 2px 8px rgba(0,0,0,0.3)",
           }}
         >
-          {/* Pulsing green dot */}
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "#6fcf7c" }} />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: "#4caf50" }} />
+          {/* Pulsing live dot */}
+          <span className="relative flex h-3 w-3 flex-shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: "#a5d6a7" }} />
+            <span className="relative inline-flex rounded-full h-3 w-3" style={{ background: "#6fcf7c" }} />
           </span>
-          <span className="text-white font-semibold text-sm tracking-wide">Chat to Ella</span>
-          {/* Arrow */}
-          <svg className="w-4 h-4 text-white/70 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+
+          {/* Label */}
+          <span className="text-white font-bold text-base tracking-wide pr-1">Chat to Ella</span>
+
+          {/* Button-in-button arrow */}
+          <span
+            className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-px"
+            style={{ background: "rgba(255,255,255,0.18)" }}
+          >
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
+          </span>
         </button>
       </div>
 
