@@ -98,7 +98,7 @@ export default function HomePage() {
                   src="/products/Eco Spray.png"
                   alt="BioCare Eco-Spray"
                   fill
-                  className="object-contain p-8 transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex-1 flex flex-col p-6 border-t border-gray-100">
@@ -130,7 +130,7 @@ export default function HomePage() {
                   src="/products/Liquid NPK.png"
                   alt="Liquid N.P.K Fertiliser"
                   fill
-                  className="object-contain p-8 transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex-1 flex flex-col p-6 border-t border-gray-100">
@@ -162,7 +162,7 @@ export default function HomePage() {
                   src="/products/44 Plus Coated Fertiliser.png"
                   alt="HealthyEarth 44-Plus"
                   fill
-                  className="object-contain p-8 transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex-1 flex flex-col p-6 border-t border-gray-100">
