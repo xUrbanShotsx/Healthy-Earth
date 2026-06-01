@@ -72,6 +72,122 @@ export default function HomePage() {
       {/* ── STATS COUNTER ───────────────────────────────────────────────────── */}
       <StatsCounter />
 
+      {/* ── FEATURED PRODUCTS ───────────────────────────────────────────────── */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: "#2d7a3a" }}>Our Products</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">Featured Products</h2>
+            <p className="mt-3 text-gray-500 text-base max-w-md mx-auto">Scientifically formulated for Australian conditions. Safe for family, pets and the environment.</p>
+          </div>
+
+          {/* Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            {/* Eco-Spray */}
+            <Link
+              href="/our-products/2"
+              className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
+              style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
+            >
+              <div className="h-2 flex-shrink-0" style={{ background: "linear-gradient(90deg, #43a047, #66bb6a)" }} />
+              <div className="flex-1 flex flex-col p-7">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 flex-shrink-0" style={{ background: "#f0faf0", color: "#43a047" }}>
+                  <Icon name="shield" className="w-6 h-6" />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#43a047" }}>Eco-Safe Garden Formula</p>
+                <h3 className="text-lg font-bold text-gray-900 leading-snug mb-2 group-hover:text-green-700 transition-colors">BioCare Eco-Spray</h3>
+                <p className="text-sm text-gray-500 leading-relaxed flex-1">Safe and effective garden spray for general plant health. No harsh chemicals — approved for use around family and pets.</p>
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="flex flex-wrap gap-1.5">
+                    {["500 mL", "1 L", "5 L"].map(s => (
+                      <span key={s} className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: "#f0faf0", color: "#2d7a3a" }}>{s}</span>
+                    ))}
+                  </div>
+                  <span className="flex items-center gap-1 text-xs font-bold transition-all duration-200 group-hover:gap-2 flex-shrink-0 ml-2" style={{ color: "#43a047" }}>
+                    View
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Liquid N.P.K */}
+            <Link
+              href="/our-products/3"
+              className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
+              style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
+            >
+              <div className="h-2 flex-shrink-0" style={{ background: "linear-gradient(90deg, #00897b, #26a69a)" }} />
+              <div className="flex-1 flex flex-col p-7">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 flex-shrink-0" style={{ background: "#e8f5f4", color: "#00897b" }}>
+                  <Icon name="drops" className="w-6 h-6" />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#00897b" }}>Balanced Liquid NPK</p>
+                <h3 className="text-lg font-bold text-gray-900 leading-snug mb-2 group-hover:text-green-700 transition-colors">Liquid N.P.K Fertiliser</h3>
+                <p className="text-sm text-gray-500 leading-relaxed flex-1">Fast-acting liquid formula that penetrates deep into the soil profile, reaching root zones faster than granular alternatives.</p>
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="flex flex-wrap gap-1.5">
+                    {["1 L", "2.5 L", "5 L"].map(s => (
+                      <span key={s} className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: "#e8f5f4", color: "#00897b" }}>{s}</span>
+                    ))}
+                  </div>
+                  <span className="flex items-center gap-1 text-xs font-bold transition-all duration-200 group-hover:gap-2 flex-shrink-0 ml-2" style={{ color: "#00897b" }}>
+                    View
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* 44-Plus */}
+            <Link
+              href="/our-products/10"
+              className="group flex flex-col rounded-2xl overflow-hidden text-white transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: "linear-gradient(145deg, #1a5227 0%, #2d7a3a 100%)",
+                boxShadow: "0 8px 32px rgba(45,122,58,0.35)",
+              }}
+            >
+              <div className="h-2 flex-shrink-0" style={{ background: "rgba(255,255,255,0.15)" }} />
+              <div className="flex-1 flex flex-col p-7">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 flex-shrink-0" style={{ background: "rgba(255,255,255,0.15)" }}>
+                  <Icon name="leaf" className="w-6 h-6 text-white" />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#a5d6a7" }}>N 13.9 · P 3.7 · K 10.7 + S 10.7</p>
+                <h3 className="text-lg font-bold text-white leading-snug mb-2">44-Plus</h3>
+                <p className="text-sm leading-relaxed flex-1" style={{ color: "rgba(255,255,255,0.7)" }}>Premium high-analysis NPK supercharged with seaweed, humic acid, fish and trace elements for superior results.</p>
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="flex flex-wrap gap-1.5">
+                    {["1 L", "5 L", "20 L"].map(s => (
+                      <span key={s} className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.9)" }}>{s}</span>
+                    ))}
+                  </div>
+                  <span className="flex items-center gap-1 text-xs font-bold transition-all duration-200 group-hover:gap-2 flex-shrink-0 ml-2 text-white">
+                    View
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+          </div>
+
+          {/* Browse all */}
+          <div className="text-center mt-10">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-full border-2 transition-all hover:bg-green-700 hover:text-white hover:border-green-700"
+              style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}
+            >
+              Browse all 25 products
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── PRODUCT SPOTLIGHT ───────────────────────────────────────────────── */}
       <section className="py-24" style={{ background: "#f5f0e8" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
