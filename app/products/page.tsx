@@ -84,15 +84,20 @@ export default function ProductsPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((product: Product) => (
-                <div key={product.id} className="group bg-white rounded-2xl overflow-hidden border border-white shadow-md hover:shadow-2xl transition-all hover:-translate-y-1 flex flex-col">
-                  <div className="h-44 flex items-center justify-center overflow-hidden" style={{ background: "linear-gradient(135deg, #f5f2ec, #faf8f4)" }}>
+                <div key={product.id} className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}>
+                  {/* Square image frame */}
+                  <div className="relative w-full aspect-square bg-gray-50 flex-shrink-0 overflow-hidden">
                     {product.image ? (
-                      <Image src={product.image} alt={product.shortName} width={320} height={176} className="w-full h-full object-contain p-2" />
+                      <Image src={product.image} alt={product.shortName} fill className="object-contain p-2 transition-transform duration-500 group-hover:scale-105" />
                     ) : (
-                      <span style={{ color: product.color }}><Icon name={product.icon} className="w-20 h-20" /></span>
+                      <div className="absolute inset-0 flex items-center justify-center" style={{ color: product.color }}>
+                        <Icon name={product.icon} className="w-24 h-24" />
+                      </div>
                     )}
                   </div>
-                  <div className="p-6 flex-1 flex flex-col">
+
+                  {/* Card body */}
+                  <div className="p-6 flex-1 flex flex-col border-t border-gray-100">
                     <div className="flex items-start justify-between gap-2 mb-3">
                       <span className="text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full text-white inline-block" style={{ background: product.color }}>
                         {product.category}
