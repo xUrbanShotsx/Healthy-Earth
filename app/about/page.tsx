@@ -1,16 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Cormorant_Garamond } from "next/font/google";
 import OpenEllaButton from "@/components/OpenEllaButton";
 import FadeIn from "@/components/FadeIn";
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "About Healthy Earth | BioCare Fertilisers",
@@ -69,11 +61,11 @@ export default function AboutPage() {
           </FadeIn>
           <FadeIn delay={80} y={40}>
             <h1
-              className={`${cormorant.className} text-white leading-[0.95]`}
+              className={`text-white leading-[0.95]`}
               style={{ fontSize: "clamp(3.5rem, 9vw, 8rem)", fontWeight: 600, letterSpacing: "-0.02em" }}
             >
               Heal Your<br />
-              <em style={{ color: "#a5d6a7", fontStyle: "italic" }}>Earth.</em>
+              <span style={{ color: "#a5d6a7" }}>Earth.</span>
             </h1>
           </FadeIn>
           <FadeIn delay={160}>
@@ -114,7 +106,7 @@ export default function AboutPage() {
               </FadeIn>
               <FadeIn delay={160}>
                 <h2
-                  className={`${cormorant.className} text-gray-900 leading-tight mb-6`}
+                  className={`text-gray-900 leading-tight mb-6`}
                   style={{ fontSize: "clamp(1.9rem, 3.5vw, 3rem)", fontWeight: 600, letterSpacing: "-0.01em" }}
                 >
                   Most conventional fertilisers supply only 1–4 elements. The food chain needs far more.
@@ -143,7 +135,7 @@ export default function AboutPage() {
           </FadeIn>
           <FadeIn delay={60}>
             <h2
-              className={`${cormorant.className} text-gray-900 mb-14`}
+              className={`text-gray-900 mb-14`}
               style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.1 }}
             >
               Three things we never<br />compromise on.
@@ -184,7 +176,7 @@ export default function AboutPage() {
                     {/* Text */}
                     <div className="p-6 flex flex-col flex-1">
                       <h3
-                        className={`${cormorant.className} text-gray-900 mb-3`}
+                        className={`text-gray-900 mb-3`}
                         style={{ fontSize: "1.4rem", fontWeight: 600, lineHeight: 1.2 }}
                       >
                         {p.title}
@@ -207,7 +199,7 @@ export default function AboutPage() {
               <FadeIn key={s.label} delay={i * 70}>
                 <div className="text-center">
                   <div
-                    className={`${cormorant.className} font-bold text-white`}
+                    className={`font-bold text-white`}
                     style={{ fontSize: "clamp(2.5rem, 5vw, 3.5rem)", lineHeight: 1, letterSpacing: "-0.02em" }}
                   >
                     {s.value}
@@ -235,8 +227,8 @@ export default function AboutPage() {
           <div className="relative flex items-center h-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
             <div className="max-w-lg">
               <p
-                className={`${cormorant.className} text-white leading-tight`}
-                style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.6rem)", fontStyle: "italic", fontWeight: 500 }}
+                className={`text-white leading-tight`}
+                style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.6rem)", fontWeight: 600 }}
               >
                 &ldquo;Healthy soil grows food that actually nourishes the people who eat it.&rdquo;
               </p>
@@ -253,11 +245,11 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 text-center">
           <FadeIn>
             <h2
-              className={`${cormorant.className} text-gray-900 leading-tight mb-6`}
+              className={`text-gray-900 leading-tight mb-6`}
               style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)", fontWeight: 600, letterSpacing: "-0.02em" }}
             >
               Ready to build<br />
-              <em style={{ fontStyle: "italic", color: "#2d7a3a" }}>healthier soil?</em>
+              <span style={{ color: "#2d7a3a" }}>healthier soil?</span>
             </h2>
           </FadeIn>
           <FadeIn delay={80}>
