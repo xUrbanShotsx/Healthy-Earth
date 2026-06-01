@@ -18,11 +18,11 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               {[
-                { label: "Facebook", path: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" },
-                { label: "Instagram", path: null, isInstagram: true },
-                { label: "YouTube", path: null, isYoutube: true },
+                { label: "Facebook", href: "https://www.facebook.com/healthyearth.com.au/", path: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" },
+                { label: "Instagram", href: "#", path: null, isInstagram: true },
+                { label: "YouTube", href: "#", path: null, isYoutube: true },
               ].map((social) => (
-                <a key={social.label} href="#" aria-label={social.label} className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center transition-colors">
+                <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer" aria-label={social.label} className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center transition-colors">
                   {social.path && (
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d={social.path}/></svg>
                   )}
