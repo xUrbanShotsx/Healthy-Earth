@@ -214,32 +214,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── WIDE IMAGE BREAK ── */}
-      <FadeIn>
-        <div className="relative overflow-hidden" style={{ height: "420px" }}>
-          <Image
-            src="https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?w=1920&q=85"
-            alt="Australian agriculture"
-            fill
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(13,31,16,0.65) 0%, rgba(13,31,16,0.15) 60%, transparent 100%)" }} />
-          <div className="relative flex items-center h-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
-            <div className="max-w-lg">
-              <p
-                className={`text-white leading-tight`}
-                style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.6rem)", fontWeight: 600 }}
-              >
-                &ldquo;Healthy soil grows food that actually nourishes the people who eat it.&rdquo;
-              </p>
-              <p className="mt-4 text-sm font-semibold uppercase tracking-widest" style={{ color: "#a5d6a7" }}>
-                Healthy Earth · BioCare Fertilisers, NSW
-              </p>
-            </div>
-          </div>
-        </div>
-      </FadeIn>
-
       {/* ── CTA ── */}
       <section className="py-28 md:py-36" style={{ background: "#FDFBF7" }}>
         <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 text-center">
