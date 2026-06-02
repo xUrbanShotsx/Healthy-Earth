@@ -26,7 +26,7 @@ export default function HomePage() {
       </section>
 
       {/* ── HERO TEXT ───────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden" style={{ background: "linear-gradient(160deg, #f4f8f2 0%, #eef5e8 50%, #f0f5eb 100%)" }}>
+      <section className="relative overflow-hidden bg-white">
         {/* Subtle sage blob — left */}
         <div className="absolute -left-32 top-1/2 -translate-y-1/2 pointer-events-none" style={{ width: "480px", height: "480px", borderRadius: "50%", background: "radial-gradient(circle, rgba(45,122,58,0.08) 0%, transparent 70%)" }} />
         {/* Subtle sage blob — right */}
@@ -200,7 +200,7 @@ export default function HomePage() {
       </section>
 
       {/* ── PRODUCT SPOTLIGHT ───────────────────────────────────────────────── */}
-      <section className="py-24" style={{ background: "#f5f0e8" }}>
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-16">
             <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: "#2d7a3a" }}>The Range</p>
@@ -315,7 +315,7 @@ export default function HomePage() {
             </div>
 
             {/* Right: 44-Plus feature */}
-            <div className="rounded-3xl overflow-hidden" style={{ background: "#f5f0e8" }}>
+            <div className="rounded-3xl overflow-hidden" style={{ background: "#f3f4f6" }}>
               <div className="p-8 border-b border-gray-200">
                 <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Flagship Farming Formula</span>
                 <h3 className="text-3xl font-bold text-gray-900 mt-2">44-Plus</h3>
@@ -417,7 +417,7 @@ export default function HomePage() {
       </section>
 
       {/* ── TESTIMONIALS ────────────────────────────────────────────────────── */}
-      <section className="py-24" style={{ background: "#f5f0e8" }}>
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-14">
             <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: "#2d7a3a" }}>Grower results</p>
