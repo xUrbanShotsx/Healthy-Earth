@@ -5,17 +5,13 @@ import OpenEllaButton from "@/components/OpenEllaButton";
 import { Icon } from "@/components/Icon";
 import HeroVideo from "@/components/HeroVideo";
 import StatsCounter from "@/components/StatsCounter";
+import TestimonialSlider from "@/components/TestimonialSlider";
 
 export const metadata: Metadata = {
   title: "Healthy Earth | Fertilisers & Plant Nutrition for Australian Gardens & Farms",
   description: "Scientifically formulated fertilisers for Australian lawns, gardens and farms. Get personalised plant nutrition advice from Ella, our AI agronomist — free, instant, and tailored to your soil.",
 };
 
-const testimonials = [
-  { name: "James T.", location: "Swan Hill, VIC", crop: "Cotton grower", text: "Using SilicaMax across our operation for two seasons. Noticeably better plant health and the soil biology has really come alive. Went from needing three fungicide sprays to one.", rating: 5 },
-  { name: "Sarah M.", location: "Brisbane, QLD", crop: "Home lawn", text: "My lawn went from patchy and yellow to properly green within 3 weeks. I described the problem to Ella and she nailed exactly what it needed on the first try.", rating: 5 },
-  { name: "Linda H.", location: "Perth, WA", crop: "Citrus orchard", text: "I've tried three other fertiliser brands on my citrus. HealthyEarth is the only one that gave me consistent colour improvement and heavier fruit. The Booster at fruit fill made a real difference.", rating: 5 },
-];
 
 export default function HomePage() {
   return (
@@ -417,35 +413,7 @@ export default function HomePage() {
       </section>
 
       {/* ── TESTIMONIALS ────────────────────────────────────────────────────── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-14">
-            <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: "#2d7a3a" }}>Grower results</p>
-            <h2 className="font-bold text-gray-900" style={{ fontSize: "clamp(1.8rem, 3vw, 2.5rem)" }}>From Australian growers.</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <div key={i} className="bg-white rounded-3xl p-8 border border-gray-100 flex flex-col">
-                <div className="text-5xl font-sans text-gray-200 leading-none mb-4">&ldquo;</div>
-                <p className="text-gray-700 leading-relaxed flex-1 mb-6">{t.text}</p>
-                <div className="flex items-center justify-between pt-5 border-t border-gray-100">
-                  <div>
-                    <p className="font-bold text-gray-900 text-sm">{t.name}</p>
-                    <p className="text-gray-400 text-xs">{t.crop} · {t.location}</p>
-                  </div>
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: t.rating }).map((_, j) => (
-                      <svg key={j} className="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                      </svg>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialSlider />
 
     </>
   );
