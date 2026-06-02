@@ -447,23 +447,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── FINAL CTA ───────────────────────────────────────────────────────── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="font-bold text-gray-900 mb-4" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-            25 formulations.<br />One problem to solve.
-          </h2>
-          <p className="text-gray-500 text-lg mb-10 max-w-xl mx-auto">Whether it&apos;s a lawn that won&apos;t green up or a broadacre crop that needs every kilogram of yield, there&apos;s a product built for it.</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/products" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-white hover:opacity-90 transition-all shadow-md" style={{ background: "#2d7a3a" }}>
-              Browse all products
-            </Link>
-            <OpenEllaButton className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold border-2 hover:bg-green-50 transition-all" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
-              Ask Ella instead
-            </OpenEllaButton>
-          </div>
-        </div>
-      </section>
     </>
   );
 }
