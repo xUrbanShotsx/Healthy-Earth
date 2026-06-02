@@ -160,7 +160,7 @@ export default function BlogPage() {
             <Reveal className="mb-12">
               <Link
                 href={`/blog/${featured!.slug}`}
-                className="group grid grid-cols-1 md:grid-cols-2 rounded-3xl overflow-hidden bg-white transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl block"
+                className="group grid grid-cols-1 md:grid-cols-2 overflow-hidden bg-white transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl block"
                 style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.09)", border: "1px solid rgba(0,0,0,0.06)" }}
               >
                 {/* Image */}
@@ -216,7 +216,7 @@ export default function BlogPage() {
             <p className="text-gray-400 font-medium text-lg">No posts in this category yet.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
             {filtered.map((post, i) => {
               const img = post.image || categoryFallback[post.category] || categoryFallback["Farming"];
               const accent = categoryColor[post.category] ?? "#2d7a3a";
@@ -224,7 +224,7 @@ export default function BlogPage() {
                 <Reveal key={post.slug} delay={i * 60}>
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="group flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-400 hover:-translate-y-1.5 hover:shadow-xl block h-full"
+                    className="group flex flex-col overflow-hidden bg-white transition-all duration-400 hover:-translate-y-1.5 hover:shadow-xl block h-full"
                     style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.07)", border: "1px solid rgba(0,0,0,0.06)" }}
                   >
                     {/* Image */}
@@ -282,7 +282,7 @@ export default function BlogPage() {
 
       {/* ── Ask Ella CTA ── */}
       <Reveal className="pb-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-        <div className="relative rounded-3xl overflow-hidden" style={{ background: "#0d1f10" }}>
+        <div className="relative overflow-hidden" style={{ background: "#0d1f10" }}>
           {/* Background photo */}
           <div className="absolute inset-0 opacity-20">
             <Image
