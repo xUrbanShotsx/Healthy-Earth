@@ -96,9 +96,9 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { href: "/our-products/2", src: "/products/Eco Spray.png", alt: "BioCare Eco-Spray", label: "Eco-Safe Garden Formula", name: "BioCare Eco-Spray", desc: "Safe and effective garden spray for general plant health. No harsh chemicals — approved for use around family and pets.", sizes: ["500 mL", "1 L", "5 L"], accent: "#43a047", delay: 0 },
-              { href: "/our-products/3", src: "/products/Liquid NPK.png", alt: "Liquid N.P.K Fertiliser", label: "Balanced Liquid NPK", name: "Liquid N.P.K Fertiliser", desc: "Fast-acting liquid formula that penetrates deep into the soil profile, reaching root zones faster than granular alternatives.", sizes: ["1 L", "2.5 L", "5 L"], accent: "#00897b", delay: 100 },
-              { href: "/our-products/10", src: "/products/44 Plus Coated Fertiliser.png", alt: "HealthyEarth 44-Plus", label: "N 13.9 · P 3.7 · K 10.7 + S 10.7", name: "44-Plus", desc: "Premium high-analysis NPK supercharged with seaweed, humic acid, fish and trace elements for superior results.", sizes: ["1 L", "5 L", "20 L"], accent: "#2d7a3a", delay: 200 },
+              { href: "/our-products/eco-spray", src: "/products/Eco Spray.png", alt: "BioCare Eco-Spray", label: "Eco-Safe Garden Formula", name: "BioCare Eco-Spray", desc: "Safe and effective garden spray for general plant health. No harsh chemicals — approved for use around family and pets.", sizes: ["1 L", "4 L", "20 L"], accent: "#43a047", delay: 0 },
+              { href: "/our-products/liquid-npk", src: "/products/Liquid NPK.png", alt: "Liquid N.P.K Fertiliser", label: "Balanced Liquid NPK", name: "Liquid N.P.K Fertiliser", desc: "Fast-acting liquid formula that penetrates deep into the soil profile, reaching root zones faster than granular alternatives.", sizes: ["1 L", "4 L", "20 L"], accent: "#00897b", delay: 100 },
+              { href: "/our-products/44-plus-garden", src: "/products/44 Plus.png", alt: "HealthyEarth 44-Plus", label: "N 13.9 · P 3.7 · K 10.7 + S 10.7", name: "44-Plus", desc: "Premium high-analysis NPK supercharged with seaweed, humic acid, fish and trace elements for superior results.", sizes: ["20 kg"], accent: "#2d7a3a", delay: 200 },
             ].map((p) => (
               <FadeIn key={p.href} delay={p.delay}>
                 <Link

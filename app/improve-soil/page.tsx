@@ -26,25 +26,25 @@ export default function ImproveSoilPage() {
                 step: "1",
                 title: "Stimulate Soil Biology",
                 body: "Healthy soil is alive. Billions of microbes break down organic matter, fix nitrogen and make minerals plant-available. SilicaMax activates the rhizosphere — the zone around plant roots where beneficial microbes live — significantly improving nutrient cycling.",
-                product: { name: "SilicaMax", id: 17 },
+                product: { name: "SilicaMax", slug: "silicamax" },
               },
               {
                 step: "2",
                 title: "Build Soil Carbon",
                 body: "Soil carbon drives water retention, nutrient holding capacity and biological diversity. Humic Carbon Liquid delivers concentrated humic and fulvic acid from ancient Australian deposits — feeding soil microbes and improving cation exchange capacity long-term.",
-                product: { name: "Humic Carbon Liquid", id: 19 },
+                product: { name: "Humic Carbon Liquid", slug: "humic-carbon-liquid" },
               },
               {
                 step: "3",
                 title: "Correct Trace Element Deficiencies",
                 body: "Nutrient imbalances are common in Australian soils. Trace element deficiencies limit plant growth even when NPK is adequate. EasyTrace delivers a full spectrum of liquid trace elements including selenium, boron, iron, zinc and molybdenum in one product.",
-                product: { name: "EasyTrace", id: 21 },
+                product: { name: "EasyTrace", slug: "easy-trace" },
               },
               {
                 step: "4",
                 title: "Reduce Compaction",
                 body: "Compacted soil suffocates plant roots and soil microbes. Aerate mechanically, then apply a soil amendment to stimulate biological loosening. Earthworm activity increases naturally as soil biology improves. The Instant Clay Breaker range helps break clay bonds and restore structure.",
-                product: { name: "Instant Clay Breaker", id: 6 },
+                product: { name: "Instant Clay Breaker", slug: "clay-breaker" },
               },
             ].map((item) => (
               <div key={item.step} className="flex gap-5">
@@ -53,7 +53,7 @@ export default function ImproveSoilPage() {
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed mb-3">{item.body}</p>
                   {item.product && (
-                    <Link href={`/our-products/${item.product.id}`} className="inline-flex items-center gap-1.5 text-sm font-semibold" style={{ color: "#2d7a3a" }}>
+                    <Link href={`/our-products/${item.product.slug}`} className="inline-flex items-center gap-1.5 text-sm font-semibold" style={{ color: "#2d7a3a" }}>
                       View {item.product.name} &rarr;
                     </Link>
                   )}

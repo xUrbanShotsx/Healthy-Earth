@@ -22,6 +22,8 @@ export default function EllaWidget() {
   const [speaking, setSpeaking] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
 
+  const [heroVisible, setHeroVisible] = useState(false);
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -47,6 +49,17 @@ export default function EllaWidget() {
       audioUnlockedRef.current = true;
     } catch { /* ignore */ }
   }
+
+  useEffect(() => {
+    const onEnter = () => setHeroVisible(true);
+    const onExit = () => setHeroVisible(false);
+    window.addEventListener("ella:hero-enter", onEnter);
+    window.addEventListener("ella:hero-exit", onExit);
+    return () => {
+      window.removeEventListener("ella:hero-enter", onEnter);
+      window.removeEventListener("ella:hero-exit", onExit);
+    };
+  }, []);
 
   useEffect(() => {
     function handleOpen(e: Event) {
@@ -333,7 +346,8 @@ export default function EllaWidget() {
           onKeyDown={handleKeyDown}
           placeholder={listening ? "Listening…" : "Ask Ella anything about plants…"}
           disabled={loading || listening}
-          className={`flex-1 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all disabled:opacity-50 ${compact ? "text-sm px-3 py-2" : "text-sm px-4 py-2.5"}`}
+          style={{ fontSize: "16px" }}
+          className={`flex-1 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all disabled:opacity-50 ${compact ? "px-3 py-2" : "px-4 py-2.5"}`}
         />
 
         <button
@@ -439,7 +453,7 @@ export default function EllaWidget() {
       {/* Launcher — hidden on mobile when widget is open (full-screen widget has its own close button) */}
       <button
         onClick={() => { setFullscreen(false); setOpen((o) => !o); }}
-        className={`fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full items-center justify-center text-white transition-all hover:scale-105 ${open ? "hidden sm:flex" : "flex"}`}
+        className={`fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full items-center justify-center text-white transition-all hover:scale-105 ${open ? "hidden sm:flex" : heroVisible ? "hidden sm:flex" : "flex"}`}
         style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)", boxShadow: "0 4px 20px rgba(45,122,58,0.5)" }}
         aria-label={open ? "Close Ella chat" : "Chat with Ella"}
       >

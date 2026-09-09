@@ -3,13 +3,13 @@ import Link from "next/link";
 import OpenEllaButton from "@/components/OpenEllaButton";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { blogPosts, getBlogPost } from "@/lib/blog";
+import { getAllBlogPosts, getBlogPostBySlug } from "@/lib/sanity-queries";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getBlogPostBySlug(slug);
   if (!post) return { title: "Post Not Found" };
   return {
     title: `${post.title} | Healthy Earth Blog`,
@@ -18,7 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }));
+  const posts = await getAllBlogPosts();
+  return posts.map((p) => ({ slug: p.slug }));
 }
 
 function formatDate(dateStr: string) {
@@ -81,14 +82,14 @@ function inlineBold(text: string): string {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const [post, allPosts] = await Promise.all([getBlogPostBySlug(slug), getAllBlogPosts()]);
   if (!post) notFound();
 
-  const related = blogPosts
+  const related = allPosts
     .filter((p) => p.slug !== post.slug && p.category === post.category)
     .slice(0, 2);
 
-  const more = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 3);
+  const more = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3);
   const accentColor = categoryColor[post.category] ?? "#2d7a3a";
 
   return (
@@ -135,10 +136,10 @@ export default async function BlogPostPage({ params }: Props) {
       </header>
 
       {/* Optional hero image */}
-      {post.image && (
+      {post.imageUrl && (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-sm">
-            <Image src={post.image} alt={post.title} fill className="object-cover" />
+            <Image src={post.imageUrl} alt={post.title} fill className="object-cover" />
           </div>
         </div>
       )}
@@ -245,9 +246,9 @@ export default async function BlogPostPage({ params }: Props) {
                     className="group block rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md hover:border-green-200 transition-all bg-white"
                   >
                     <div className="h-1.5 w-full" style={{ background: color }} />
-                    {p.image && (
+                    {p.imageUrl && (
                       <div className="relative h-40">
-                        <Image src={p.image} alt={p.title} fill className="object-cover" />
+                        <Image src={p.imageUrl} alt={p.title} fill className="object-cover" />
                       </div>
                     )}
                     <div className="p-5">

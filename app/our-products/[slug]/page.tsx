@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import OpenEllaButton from "@/components/OpenEllaButton";
-import { products, getProductById } from "@/lib/products";
-import { notFound } from "next/navigation";
-import { Icon } from "@/components/Icon";
 import Image from "next/image";
+import { notFound } from "next/navigation";
+import OpenEllaButton from "@/components/OpenEllaButton";
+import { getAllProducts, getProductBySlug } from "@/lib/sanity-queries";
+import { Icon } from "@/components/Icon";
+import type { IconName } from "@/components/Icon";
 
 export async function generateStaticParams() {
-  return products.map((p) => ({ id: String(p.id) }));
+  const products = await getAllProducts();
+  return products.map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const { id } = await params;
-  const product = getProductById(Number(id));
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   if (!product) return { title: "Product Not Found" };
   return {
     title: `${product.name} | Healthy Earth`,
@@ -20,12 +22,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const product = getProductById(Number(id));
+export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const related = products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 3);
+  const allProducts = await getAllProducts();
+  const related = allProducts.filter((p) => p.slug !== product.slug && p.category === product.category).slice(0, 3);
 
   return (
     <>
@@ -45,11 +48,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Image */}
-            <div className="rounded-3xl overflow-hidden flex items-center justify-center h-80 lg:h-96" style={{ background: "linear-gradient(135deg, #f5f2ec, #faf8f4)" }}>
-              {product.image ? (
-                <Image src={product.image} alt={product.shortName} width={600} height={384} className="w-full h-full object-contain p-4" />
+            <div className="rounded-3xl overflow-hidden flex items-center justify-center h-80 lg:h-96" style={{ background: "#fffbf6" }}>
+              {product.imageUrl ? (
+                <Image src={product.imageUrl} alt={product.shortName} width={600} height={384} className="w-full h-full object-contain p-4" />
               ) : (
-                <span style={{ color: product.color }}><Icon name={product.icon} className="w-40 h-40" /></span>
+                <span style={{ color: product.color }}><Icon name={product.icon as IconName} className="w-40 h-40" /></span>
               )}
             </div>
 
@@ -91,8 +94,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       <section className="py-14" style={{ background: "#f9f6f0" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            {/* Key Benefits */}
             <div className="bg-white rounded-2xl p-6 border border-gray-100">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs" style={{ background: "#2d7a3a" }}>✓</span>
@@ -110,7 +111,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </ul>
             </div>
 
-            {/* Dosage */}
             <div className="bg-white rounded-2xl p-6 border border-gray-100">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs" style={{ background: "#2d7a3a" }}>📏</span>
@@ -126,7 +126,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </ul>
             </div>
 
-            {/* Best For */}
             <div className="bg-white rounded-2xl p-6 border border-gray-100">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs" style={{ background: "#2d7a3a" }}>🎯</span>
@@ -140,7 +139,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
 
-          {/* Usage + Safety */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div className="bg-white rounded-2xl p-6 border border-gray-100">
               <h2 className="text-lg font-bold text-gray-900 mb-3">How to Use</h2>
@@ -174,8 +172,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <h2 className="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               {related.map((p) => (
-                <Link key={p.id} href={`/our-products/${p.id}`} className="group p-5 rounded-2xl border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1 flex gap-4">
-                  <div className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${p.color}20`, color: p.color }}><Icon name={p.icon} className="w-8 h-8" /></div>
+                <Link key={p.slug} href={`/our-products/${p.slug}`} className="group p-5 rounded-2xl border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1 flex gap-4">
+                  <div className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${p.color}20`, color: p.color }}>
+                    <Icon name={p.icon as IconName} className="w-8 h-8" />
+                  </div>
                   <div>
                     <p className="font-bold text-gray-900 text-sm group-hover:text-green-700 transition-colors">{p.shortName}</p>
                     <p className="text-xs text-gray-400 mt-0.5">{p.subtitle}</p>

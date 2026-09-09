@@ -39,7 +39,7 @@ export default function LawnFertiliserPage() {
           <div className="p-6 rounded-2xl border border-green-200 mb-10" style={{ background: "#f0f9f0" }}>
             <h3 className="font-bold text-gray-900 mb-2">Our Recommendation: HealthyEarth Pro-Strength Lawn Fertiliser</h3>
             <p className="text-sm text-gray-700 leading-relaxed mb-4">A balanced N 13 : P 3 : K 14 granular formula with trace elements. Suits all Australian grass types. Apply 25&ndash;40 g/m&sup2; and water in thoroughly. Results visible within 7&ndash;10 days.</p>
-            <Link href="/our-products/9" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white" style={{ background: "#2d7a3a" }}>View Product Details</Link>
+            <Link href="/our-products/pro-strength-lawn" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white" style={{ background: "#2d7a3a" }}>View Product Details</Link>
           </div>
 
           <div className="p-6 rounded-2xl" style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}>

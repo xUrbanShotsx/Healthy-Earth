@@ -10,11 +10,12 @@ type Retailer = {
   name: string;
   address: string;
   phone?: string;
+  website?: string;
   state: string;
 };
 
 const retailers: Retailer[] = [
-  { name: "Shell Harbour City Council Nursery", address: "River Oak PL, Oak Flats NSW 2529", phone: "02 4221 6191", state: "NSW" },
+  { name: "Shellharbour City Council Nursery", address: "River Oak PL, Oak Flats NSW 2529", phone: "02 4221 6191", state: "NSW" },
   { name: "Gnulla Dulla Garden Centre", address: "Green St, Ulladulla NSW 2539", phone: "02 4454 4166", state: "NSW" },
   { name: "Rose Tree Garden Centre", address: "102 Queen St, Berry NSW 2535", phone: "0478 429 768", state: "NSW" },
   { name: "Bishops South Nowra Nursery", address: "21 Bellevue St, South Nowra NSW 2541", phone: "02 4423 2359", state: "NSW" },
@@ -23,7 +24,7 @@ const retailers: Retailer[] = [
   { name: "Dapto Community Farm", address: "29 Darkes Rd, Dapto NSW 2530", phone: "0406 130 xxx", state: "NSW" },
   { name: "Leisure Coast Garden Centre", address: "75 Princes Hwy, Fairy Meadow NSW 2519", phone: "02 4285 1130", state: "NSW" },
   { name: "Nonno's Garden Centre", address: "195 Princes Hwy, Bodalla NSW 2545", phone: "0482 512 516", state: "NSW" },
-  { name: "Enfield Produce", address: "56 Coronation Parade, Enfield NSW", phone: "02 9072 9015", state: "NSW" },
+  { name: "Enfield Produce", address: "56 Coronation Parade, Enfield NSW", phone: "02 9072 9015", website: "https://petandgarden.com.au/?gad_source=1&gad_campaignid=22386402222&gbraid=0AAAAADzF5GvH7miqj7uXUfdw8P-tEkIa5&gclid=Cj0KCQjwteTUBhD4ARIsAEYjs3oWlScXIoqN24jmkdP9TpROZ6IRmOovax6X-iYPbJU1OVFGZjseWjUaArTwEALw_wcB", state: "NSW" },
   { name: "Backyard Blooms", address: "309 Lawrence Hargrave Drive, Thirroul NSW", phone: "02 4268 0516", state: "NSW" },
   { name: "Oaklands Barn and Garden Centre", address: "3546 Princes Hwy, Greigs Flat NSW 2549", phone: "02 6495 7257", state: "NSW" },
   { name: "The Heritage Nursery", address: "Robert Boden Grv, Yarralumla ACT 2600", phone: "0448 007 207", state: "ACT" },
@@ -106,18 +107,34 @@ export default function RetailersPage() {
                     >
                       <p className="font-semibold text-gray-900 mb-1 leading-snug">{r.name}</p>
                       <p className="text-sm text-gray-500 mb-4 leading-relaxed">{r.address}</p>
-                      {r.phone && r.phone !== "0406 130 xxx" && (
-                        <a
-                          href={`tel:${r.phone.replace(/\s/g, "")}`}
-                          className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:text-green-700"
-                          style={{ color: "#2d7a3a" }}
-                        >
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                          {r.phone}
-                        </a>
-                      )}
+                      <div className="flex flex-col gap-2">
+                        {r.phone && r.phone !== "0406 130 xxx" && (
+                          <a
+                            href={`tel:${r.phone.replace(/\s/g, "")}`}
+                            className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:text-green-700"
+                            style={{ color: "#2d7a3a" }}
+                          >
+                            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                            {r.phone}
+                          </a>
+                        )}
+                        {r.website && (
+                          <a
+                            href={r.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:text-green-700"
+                            style={{ color: "#2d7a3a" }}
+                          >
+                            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+                            </svg>
+                            Visit Website
+                          </a>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

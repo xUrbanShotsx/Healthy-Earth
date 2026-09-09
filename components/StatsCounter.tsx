@@ -6,8 +6,8 @@ const stats = [
   { num: 25, suffix: "", label: "formulations" },
   { num: 51, suffix: "%", label: "SiO₂ in SilicaMax" },
   { num: 30, suffix: "+", label: "years of research" },
-  { num: 0,  suffix: "", label: "synthetic additives" },
-  { num: 100, suffix: "%", label: "Australian-made" },
+
+  { num: 100, suffix: "% 🇦🇺", label: "Australian-made" },
 ];
 
 function Counter({ num, suffix, label, started }: { num: number; suffix: string; label: string; started: boolean }) {

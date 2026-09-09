@@ -1,10 +1,19 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function HeroVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [muted, setMuted] = useState(true);
+  const playsRef = useRef(0);
+
+  function handleEnded() {
+    playsRef.current += 1;
+    if (playsRef.current < 3 && videoRef.current) {
+      videoRef.current.play();
+    }
+  }
 
   function toggleMute() {
     if (!videoRef.current) return;
@@ -12,20 +21,52 @@ export default function HeroVideo() {
     setMuted(videoRef.current.muted);
   }
 
+  // Notify EllaWidget when hero enters/exits viewport (mobile only)
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        window.dispatchEvent(new CustomEvent(
+          entry.isIntersecting ? "ella:hero-enter" : "ella:hero-exit"
+        ));
+      },
+      { threshold: 0.2 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <>
+    <div ref={sectionRef} className="contents">
       <video
         ref={videoRef}
-        src="/ella-hero.mp4"
+        src="/Video.mp4"
         autoPlay
         muted
-        loop
         playsInline
+        onEnded={handleEnded}
         className="absolute inset-0 w-full h-full object-cover object-center md:object-right-top"
       />
 
-      {/* Chat to Ella — bold CTA bottom centre */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
+      {/* Chat to Ella — full-width bar on mobile, centred pill on desktop */}
+      {/* Mobile */}
+      <div className="md:hidden absolute bottom-0 left-0 right-0 z-20">
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent("ella:open", { detail: { fullscreen: true } }))}
+          className="w-full flex items-center justify-center gap-3 py-4 active:opacity-90"
+          style={{ background: "linear-gradient(135deg, #1a5227, #2d7a3a)" }}
+        >
+          <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: "#a5d6a7" }} />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: "#6fcf7c" }} />
+          </span>
+          <span className="text-white font-bold text-base tracking-wide">Chat to Ella</span>
+        </button>
+      </div>
+
+      {/* Desktop — centred pill */}
+      <div className="hidden md:block absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
         <button
           onClick={() => window.dispatchEvent(new CustomEvent("ella:open", { detail: { fullscreen: true } }))}
           className="group relative flex items-center gap-4 pl-5 pr-2 py-2 rounded-full transition-all duration-500 hover:scale-105 active:scale-95"
@@ -34,16 +75,11 @@ export default function HeroVideo() {
             boxShadow: "0 0 0 1px rgba(255,255,255,0.15), 0 8px 40px rgba(45,122,58,0.55), 0 2px 8px rgba(0,0,0,0.3)",
           }}
         >
-          {/* Pulsing live dot */}
           <span className="relative flex h-3 w-3 flex-shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: "#a5d6a7" }} />
             <span className="relative inline-flex rounded-full h-3 w-3" style={{ background: "#6fcf7c" }} />
           </span>
-
-          {/* Label */}
           <span className="text-white font-bold text-base tracking-wide pr-1">Chat to Ella</span>
-
-          {/* Button-in-button arrow */}
           <span
             className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-px"
             style={{ background: "rgba(255,255,255,0.18)" }}
@@ -77,6 +113,6 @@ export default function HeroVideo() {
           </svg>
         )}
       </button>
-    </>
+    </div>
   );
 }

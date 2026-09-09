@@ -33,8 +33,8 @@ const pillars = [
 const stats = [
   { value: "30+", label: "Years of research" },
   { value: "25", label: "Formulations" },
-  { value: "0", label: "Synthetic additives" },
-  { value: "100%", label: "Australian-made" },
+
+  { value: "🇦🇺", label: "Australian-made" },
 ];
 
 export default function AboutPage() {

@@ -11,11 +11,14 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="mb-4">
-              <Image src="/My Logo.png" alt="Healthy BioCare" width={130} height={56} className="h-12 w-auto object-contain brightness-0 invert" />
+              <Image src="/My Logo.png" alt="Healthy BioCare" width={200} height={86} className="h-20 w-auto object-contain brightness-0 invert" />
             </div>
-            <p className="text-white/65 text-sm leading-relaxed mb-5">
+            <p className="text-white/65 text-sm leading-relaxed mb-3">
               Scientifically formulated plant nutrition for Australian gardens, lawns and farms. Backed by decades of agronomic research.
             </p>
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full mb-4" style={{ background: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)", border: "1px solid rgba(255,255,255,0.2)" }}>
+              🇦🇺 Proudly Australian Made &amp; Owned
+            </div>
             <div className="flex gap-3">
               {[
                 { label: "Facebook", href: "https://www.facebook.com/healthyearth.com.au/", path: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" },
@@ -97,21 +100,15 @@ export default function Footer() {
               </li>
             </ul>
 
-            <div className="mt-5 p-3 rounded-xl bg-white/10">
-              <p className="text-xs text-white/70 font-medium mb-2">Get growing tips</p>
-              <form className="flex gap-2">
-                <input type="email" placeholder="your@email.com" className="flex-1 text-xs px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-white/40" />
-                <button type="submit" className="text-xs px-3 py-2 rounded-lg font-semibold text-white transition-colors" style={{ background: "#2d7a3a" }}>Join</button>
-              </form>
-            </div>
           </div>
         </div>
 
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-white/40 text-xs">© 2026 Healthy Earth · BioCare Fertilisers Pty Ltd. All rights reserved.</p>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <Link href="/terms" className="text-white/40 hover:text-white/70 text-xs transition-colors">Terms</Link>
             <Link href="/privacy" className="text-white/40 hover:text-white/70 text-xs transition-colors">Privacy</Link>
+            <Link href="https://www.sanjstudio.com/" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white/70 text-xs transition-colors">Website by SanjSTUDIO</Link>
           </div>
         </div>
       </div>
