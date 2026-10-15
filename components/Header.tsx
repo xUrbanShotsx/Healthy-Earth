@@ -36,22 +36,22 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-28">
+        <div className="flex items-center justify-between h-20">
 
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
-            <Image src="/My Logo.png" alt="Healthy BioCare" width={420} height={185} className="h-28 w-auto object-contain" priority />
+            <Image src="/My Logo.png" alt="Healthy BioCare" width={520} height={230} className="h-16 w-auto object-contain" priority />
           </Link>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">
-            <Link href="/" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Home</Link>
+            <Link href="/" className="px-3 py-2 text-base font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Home</Link>
 
             {/* Products dropdown */}
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors"
+                className="flex items-center gap-1 px-3 py-2 text-base font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors"
               >
                 Products
                 <svg className={`w-4 h-4 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,19 +83,19 @@ export default function Header() {
               )}
             </div>
 
-            <Link href="/farming" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Farming</Link>
-            <button onClick={openEllaFullscreen} className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Plant Problem Solver</button>
-            <Link href="/blog" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Chat</Link>
-            <Link href="/retailers" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Retailers</Link>
-            <Link href="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">About</Link>
+            <Link href="/farming" className="px-3 py-2 text-base font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Farming</Link>
+            <button onClick={openEllaFullscreen} className="px-3 py-2 text-base font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Plant Problem Solver</button>
+            <Link href="/blog" className="px-3 py-2 text-base font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Chat</Link>
+            <Link href="/retailers" className="px-3 py-2 text-base font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">Retailers</Link>
+            <Link href="/about" className="px-3 py-2 text-base font-medium text-gray-700 hover:text-green-700 rounded-lg hover:bg-green-50 transition-colors">About</Link>
           </nav>
 
           {/* CTAs */}
           <div className="hidden md:flex items-center gap-2">
-            <button onClick={openElla} className="text-sm font-semibold px-4 py-2 rounded-full border-2 transition-all hover:bg-green-700 hover:text-white hover:border-green-700" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
+            <button onClick={openElla} className="text-base font-semibold px-5 py-2.5 rounded-full border-2 transition-all hover:bg-green-700 hover:text-white hover:border-green-700" style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}>
               Ask Ella
             </button>
-            <Link href="/products" className="text-sm font-semibold px-4 py-2 rounded-full text-white transition-all hover:opacity-90 shadow-sm" style={{ background: "#2d7a3a" }}>
+            <Link href="/products" className="text-base font-semibold px-5 py-2.5 rounded-full text-white transition-all hover:opacity-90 shadow-sm" style={{ background: "#2d7a3a" }}>
               Browse Products
             </Link>
           </div>
