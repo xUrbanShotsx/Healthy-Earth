@@ -27,26 +27,28 @@ export default function EllaWidget() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const audioUnlockedRef = useRef(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const audioCtxRef = useRef<any>(null);
+  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
-  // Unlock audio on iOS/Android — must be called inside a user-gesture handler
+  // Unlock and persist AudioContext on first user gesture — required for iOS
   function unlockAudio() {
-    if (audioUnlockedRef.current) return;
+    if (audioCtxRef.current) return;
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const ACtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (ACtx) {
-        const ctx = new ACtx();
-        const buf = ctx.createBuffer(1, 1, 22050);
-        const src = ctx.createBufferSource();
-        src.buffer = buf;
-        src.connect(ctx.destination);
-        src.start(0);
-        ctx.resume();
-      }
-      audioUnlockedRef.current = true;
+      if (!ACtx) return;
+      const ctx = new ACtx();
+      // Play silent buffer to unlock
+      const buf = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(0);
+      ctx.resume();
+      audioCtxRef.current = ctx;
     } catch { /* ignore */ }
   }
 
@@ -86,6 +88,8 @@ export default function EllaWidget() {
     if (!open) {
       audioRef.current?.pause();
       audioRef.current = null;
+      try { audioSourceRef.current?.stop(); } catch { /* already stopped */ }
+      audioSourceRef.current = null;
       window.speechSynthesis?.cancel();
       setSpeaking(false);
     }
@@ -104,6 +108,8 @@ export default function EllaWidget() {
   const stopSpeaking = useCallback(() => {
     audioRef.current?.pause();
     audioRef.current = null;
+    try { audioSourceRef.current?.stop(); } catch { /* already stopped */ }
+    audioSourceRef.current = null;
     window.speechSynthesis?.cancel();
     setSpeaking(false);
   }, []);
@@ -200,11 +206,23 @@ export default function EllaWidget() {
             body: JSON.stringify({ text: assistantText }),
           });
           if (audioRes.ok) {
-            const blob = await audioRes.blob();
-            if (blob.size > 0) {
+            const arrayBuf = await audioRes.arrayBuffer();
+            if (arrayBuf.byteLength > 0 && audioCtxRef.current) {
+              const ctx = audioCtxRef.current;
+              if (ctx.state === "suspended") await ctx.resume();
+              const decoded = await ctx.decodeAudioData(arrayBuf);
+              const src = ctx.createBufferSource();
+              src.buffer = decoded;
+              src.connect(ctx.destination);
+              audioSourceRef.current = src;
+              setSpeaking(true);
+              src.onended = () => { audioSourceRef.current = null; setSpeaking(false); };
+              src.start(0);
+            } else if (arrayBuf.byteLength > 0) {
+              // Fallback: AudioContext not ready, use blob URL
+              const blob = new Blob([arrayBuf], { type: "audio/mpeg" });
               const url = URL.createObjectURL(blob);
               const audio = new Audio(url);
-              audio.preload = "auto";
               audioRef.current = audio;
               audio.onended = () => { URL.revokeObjectURL(url); setSpeaking(false); };
               audio.onerror = () => { setSpeaking(false); URL.revokeObjectURL(url); speakFallback(assistantText); };
