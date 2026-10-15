@@ -135,8 +135,7 @@ export default function HomePage() {
             <div className="text-center mt-12">
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 text-sm font-semibold px-7 py-3.5 rounded-full border-2 transition-all hover:bg-green-700 hover:text-white hover:border-green-700 active:scale-95"
-                style={{ borderColor: "#2d7a3a", color: "#2d7a3a" }}
+                className="inline-flex items-center gap-2 text-sm font-semibold px-7 py-3.5 rounded-full border-2 transition-all hover:bg-green-700 hover:text-white hover:border-green-700 active:scale-95 text-[#2d7a3a] border-[#2d7a3a]"
               >
                 Browse all 25 products
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
