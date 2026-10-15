@@ -7,17 +7,16 @@ export async function POST(req: NextRequest) {
   const { text } = await req.json();
   if (!text) return new Response("No text provided", { status: 400 });
 
-  const xaiRes = await fetch("https://api.x.ai/v1/audio/speech", {
+  const xaiRes = await fetch("https://api.x.ai/v1/tts", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "aurora",
-      input: text,
-      voice: "Carina",
-      response_format: "mp3",
+      text,
+      voice_id: "eve",
+      language: "en",
     }),
   });
 
