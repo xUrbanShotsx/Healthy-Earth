@@ -113,12 +113,36 @@ export default function EllaWidget() {
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "en-AU";
-    utter.rate = 1.0;
-    utter.pitch = 1.05;
-    utter.onstart = () => setSpeaking(true);
-    utter.onend = () => setSpeaking(false);
-    utter.onerror = () => setSpeaking(false);
-    window.speechSynthesis.speak(utter);
+    utter.rate = 0.95;
+    utter.pitch = 1.0;
+
+    const setVoiceAndSpeak = () => {
+      const voices = window.speechSynthesis.getVoices();
+      // Preference order: Australian female → Australian → NZ → UK female → any English
+      const preferred = [
+        voices.find(v => v.name === "Karen"),
+        voices.find(v => v.name === "Catherine"),
+        voices.find(v => v.name.includes("Australia") && v.name.toLowerCase().includes("female")),
+        voices.find(v => v.lang === "en-AU"),
+        voices.find(v => v.lang === "en-NZ"),
+        voices.find(v => v.name === "Samantha"),
+        voices.find(v => v.name.includes("Serena")),
+        voices.find(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("male")),
+        voices.find(v => v.lang.startsWith("en")),
+      ].find(Boolean);
+      if (preferred) utter.voice = preferred;
+      utter.onstart = () => setSpeaking(true);
+      utter.onend = () => setSpeaking(false);
+      utter.onerror = () => setSpeaking(false);
+      window.speechSynthesis.speak(utter);
+    };
+
+    // Voices may not be loaded yet on first call
+    if (window.speechSynthesis.getVoices().length > 0) {
+      setVoiceAndSpeak();
+    } else {
+      window.speechSynthesis.onvoiceschanged = () => { setVoiceAndSpeak(); };
+    }
   }
 
   const sendMessage = useCallback(async (textOverride?: string) => {
