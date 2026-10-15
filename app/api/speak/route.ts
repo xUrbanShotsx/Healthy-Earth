@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "grok-2-aurora",
+      model: "aurora",
       input: text,
       voice: "Carina",
       response_format: "mp3",

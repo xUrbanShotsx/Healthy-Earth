@@ -86,6 +86,7 @@ export default function EllaWidget() {
     if (!open) {
       audioRef.current?.pause();
       audioRef.current = null;
+      window.speechSynthesis?.cancel();
       setSpeaking(false);
     }
   }, [open]);
@@ -103,8 +104,22 @@ export default function EllaWidget() {
   const stopSpeaking = useCallback(() => {
     audioRef.current?.pause();
     audioRef.current = null;
+    window.speechSynthesis?.cancel();
     setSpeaking(false);
   }, []);
+
+  function speakFallback(text: string) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "en-AU";
+    utter.rate = 1.0;
+    utter.pitch = 1.05;
+    utter.onstart = () => setSpeaking(true);
+    utter.onend = () => setSpeaking(false);
+    utter.onerror = () => setSpeaking(false);
+    window.speechSynthesis.speak(utter);
+  }
 
   const sendMessage = useCallback(async (textOverride?: string) => {
     const text = (textOverride ?? input).trim();
@@ -160,31 +175,24 @@ export default function EllaWidget() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text: assistantText }),
           });
-          if (!audioRes.ok) {
-            const errText = await audioRes.text();
-            console.error("TTS API error:", audioRes.status, errText);
-          } else {
+          if (audioRes.ok) {
             const blob = await audioRes.blob();
-            console.log("TTS blob size:", blob.size, "type:", blob.type);
             if (blob.size > 0) {
               const url = URL.createObjectURL(blob);
               const audio = new Audio(url);
               audio.preload = "auto";
               audioRef.current = audio;
               audio.onended = () => { URL.revokeObjectURL(url); setSpeaking(false); };
-              audio.onerror = (e) => { console.error("Audio element error:", e); setSpeaking(false); URL.revokeObjectURL(url); };
+              audio.onerror = () => { setSpeaking(false); URL.revokeObjectURL(url); speakFallback(assistantText); };
               setSpeaking(true);
-              try {
-                await audio.play();
-              } catch (playErr) {
-                console.error("audio.play() blocked:", playErr);
-                setSpeaking(false);
-              }
+              try { await audio.play(); } catch { setSpeaking(false); speakFallback(assistantText); }
             } else {
-              console.error("TTS returned empty blob");
+              speakFallback(assistantText);
             }
+          } else {
+            speakFallback(assistantText);
           }
-        } catch (err) { console.error("TTS playback error:", err); }
+        } catch { speakFallback(assistantText); }
       }
     } catch {
       setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, something went wrong. Give it another go in a sec!" }]);
