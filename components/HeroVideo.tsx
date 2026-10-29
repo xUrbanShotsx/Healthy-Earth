@@ -91,28 +91,17 @@ export default function HeroVideo() {
         </button>
       </div>
 
-      {/* Mute / unmute toggle — top right */}
-      <button
-        onClick={toggleMute}
-        aria-label={muted ? "Unmute video" : "Mute video"}
-        className="absolute top-4 right-4 z-10 flex items-center justify-center w-10 h-10 rounded-full transition-all hover:scale-110"
-        style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.25)" }}
-      >
-        {muted ? (
-          /* Muted — speaker with X */
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m2-2l-2 2m0 0l-2 2" />
-          </svg>
-        ) : (
-          /* Unmuted — speaker with sound waves */
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728" />
-          </svg>
-        )}
-      </button>
+      {/* Mute / unmute toggle — centred pill */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3">
+        <button
+          onClick={toggleMute}
+          aria-label={muted ? "Unmute video" : "Mute video"}
+          className="flex items-center justify-center px-8 py-4 rounded-full text-white font-semibold text-lg tracking-wide transition-all active:scale-95 hover:scale-105"
+          style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.35)", boxShadow: "0 4px 24px rgba(0,0,0,0.15)" }}
+        >
+          {muted ? "Click to unmute" : "Click to mute"}
+        </button>
+      </div>
     </div>
   );
 }
