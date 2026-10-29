@@ -91,8 +91,8 @@ export default function HeroVideo() {
         </button>
       </div>
 
-      {/* Mute / unmute toggle — centred pill */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3">
+      {/* Mute / unmute toggle — top right */}
+      <div className="absolute top-4 right-4 z-10 flex flex-col items-center gap-3">
         <button
           onClick={toggleMute}
           aria-label={muted ? "Unmute video" : "Mute video"}
