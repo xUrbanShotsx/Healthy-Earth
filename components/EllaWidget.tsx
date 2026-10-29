@@ -30,6 +30,8 @@ export default function EllaWidget() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const audioCtxRef = useRef<any>(null);
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const audioQueueRef = useRef<ArrayBuffer[]>([]);
+  const isPlayingRef = useRef(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
@@ -110,9 +112,62 @@ export default function EllaWidget() {
     audioRef.current = null;
     try { audioSourceRef.current?.stop(); } catch { /* already stopped */ }
     audioSourceRef.current = null;
+    audioQueueRef.current = [];
+    isPlayingRef.current = false;
     window.speechSynthesis?.cancel();
     setSpeaking(false);
   }, []);
+
+  const playNextInQueue = useCallback(async () => {
+    if (isPlayingRef.current || audioQueueRef.current.length === 0) return;
+    isPlayingRef.current = true;
+    const buf = audioQueueRef.current.shift()!;
+    const ctx = audioCtxRef.current;
+    if (!ctx) { isPlayingRef.current = false; return; }
+    try {
+      if (ctx.state === "suspended") await ctx.resume();
+      const decoded = await ctx.decodeAudioData(buf.slice(0));
+      const src = ctx.createBufferSource();
+      src.buffer = decoded;
+      src.connect(ctx.destination);
+      audioSourceRef.current = src;
+      setSpeaking(true);
+      src.onended = () => {
+        audioSourceRef.current = null;
+        isPlayingRef.current = false;
+        if (audioQueueRef.current.length > 0) {
+          playNextInQueue();
+        } else {
+          setSpeaking(false);
+        }
+      };
+      src.start(0);
+    } catch {
+      isPlayingRef.current = false;
+      playNextInQueue();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const enqueueSentence = useCallback(async (sentence: string) => {
+    if (!sentence.trim()) return;
+    try {
+      const audioRes = await fetch("/api/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: sentence }),
+      });
+      if (!audioRes.ok) { speakFallback(sentence); return; }
+      const buf = await audioRes.arrayBuffer();
+      if (buf.byteLength > 0) {
+        audioQueueRef.current.push(buf);
+        playNextInQueue();
+      } else {
+        speakFallback(sentence);
+      }
+    } catch { speakFallback(sentence); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playNextInQueue]);
 
   function speakFallback(text: string) {
     if (!window.speechSynthesis) return;
@@ -165,6 +220,10 @@ export default function EllaWidget() {
     setInput("");
     setLoading(true);
 
+    // Reset audio queue for new message
+    audioQueueRef.current = [];
+    isPlayingRef.current = false;
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -176,7 +235,13 @@ export default function EllaWidget() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let assistantText = "";
+      let sentenceBuf = "";
       setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+
+      const flushSentence = (buf: string) => {
+        const trimmed = buf.trim();
+        if (voiceEnabled && trimmed.length > 6) enqueueSentence(trimmed);
+      };
 
       while (true) {
         const { done, value } = await reader.read();
@@ -189,59 +254,34 @@ export default function EllaWidget() {
           try {
             const delta = JSON.parse(data).choices?.[0]?.delta?.content ?? "";
             assistantText += delta;
+            sentenceBuf += delta;
             setMessages((prev) => {
               const updated = [...prev];
               updated[updated.length - 1] = { role: "assistant", content: assistantText };
               return updated;
             });
+            // Fire TTS on each sentence boundary
+            const boundary = /[.!?]+(?:\s|$)/g;
+            let match: RegExpExecArray | null;
+            let lastIdx = 0;
+            while ((match = boundary.exec(sentenceBuf)) !== null) {
+              const sentence = sentenceBuf.slice(lastIdx, match.index + match[0].trimEnd().length);
+              flushSentence(sentence);
+              lastIdx = match.index + match[0].length;
+            }
+            sentenceBuf = sentenceBuf.slice(lastIdx);
           } catch { /* skip */ }
         }
       }
+      // Flush any remaining text after stream ends
+      flushSentence(sentenceBuf);
 
-      if (voiceEnabled && assistantText) {
-        try {
-          const audioRes = await fetch("/api/speak", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: assistantText }),
-          });
-          if (audioRes.ok) {
-            const arrayBuf = await audioRes.arrayBuffer();
-            if (arrayBuf.byteLength > 0 && audioCtxRef.current) {
-              const ctx = audioCtxRef.current;
-              if (ctx.state === "suspended") await ctx.resume();
-              const decoded = await ctx.decodeAudioData(arrayBuf);
-              const src = ctx.createBufferSource();
-              src.buffer = decoded;
-              src.connect(ctx.destination);
-              audioSourceRef.current = src;
-              setSpeaking(true);
-              src.onended = () => { audioSourceRef.current = null; setSpeaking(false); };
-              src.start(0);
-            } else if (arrayBuf.byteLength > 0) {
-              // Fallback: AudioContext not ready, use blob URL
-              const blob = new Blob([arrayBuf], { type: "audio/mpeg" });
-              const url = URL.createObjectURL(blob);
-              const audio = new Audio(url);
-              audioRef.current = audio;
-              audio.onended = () => { URL.revokeObjectURL(url); setSpeaking(false); };
-              audio.onerror = () => { setSpeaking(false); URL.revokeObjectURL(url); speakFallback(assistantText); };
-              setSpeaking(true);
-              try { await audio.play(); } catch { setSpeaking(false); speakFallback(assistantText); }
-            } else {
-              speakFallback(assistantText);
-            }
-          } else {
-            speakFallback(assistantText);
-          }
-        } catch { speakFallback(assistantText); }
-      }
     } catch {
       setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, something went wrong. Give it another go in a sec!" }]);
     } finally {
       setLoading(false);
     }
-  }, [input, loading, messages, voiceEnabled]);
+  }, [input, loading, messages, voiceEnabled, enqueueSentence]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
