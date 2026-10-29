@@ -96,7 +96,7 @@ export default function HeroVideo() {
         <button
           onClick={toggleMute}
           aria-label={muted ? "Unmute video" : "Mute video"}
-          className="flex items-center justify-center px-8 py-4 rounded-full text-white font-semibold text-lg tracking-wide transition-all active:scale-95 hover:scale-105"
+          className="flex items-center justify-center px-6 py-3 rounded-full text-white font-semibold text-base tracking-wide transition-all active:scale-95 hover:scale-105"
           style={{ background: "#2d7a3a", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.2)", boxShadow: "0 4px 24px rgba(0,0,0,0.2)" }}
         >
           {muted ? "Click to unmute" : "Click to mute"}
