@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       text,
       voice_id: "liora",
-      language: "en",
+      language: "en-AU",
     }),
   });
 
